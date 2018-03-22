@@ -10,7 +10,11 @@
 </head>
 <body>
   <div class="content">
-  <p>﻿﻿##深入理解Android中Activity的launchMode</p>
+  <p>﻿﻿<center></p>
+
+<h2>深入理解Android中Activity的launchMode</h2>
+
+<p>﻿</center></p>
 
 <p>合理地设计Activity对象是否使用已有的实例还是多次创建，会使得交互设计更加良好，也能避免很多问题。</p>
 
@@ -96,7 +100,8 @@
 
 <p>除了在manifest中设置启动模式外，也可以在Intent中设置flag。下面代码就可以让StandardActivity以singleTop模式启动：</p>
 
-<pre><code>Intent intent = new Intent(StandardActivity.this, StandardActivity.class);intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); 
+<pre><code>Intent intent = new Intent(StandardActivity.this, StandardActivity.class);
+intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); 
 startActivity(intent);
 </code></pre>
 
