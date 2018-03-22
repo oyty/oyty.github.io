@@ -1,0 +1,81 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes"/>
+    <link href="https://oyty.github.io/main.css" rel="stylesheet" type="text/css">
+    <link href="https://oyty.github.io/codehighlight.css" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+    <link rel="shortcut icon" href="https://oyty.github.io/images/logo.bmp">
+    <title></title>
+</head>
+<body>
+  <div class="content">
+  <h2>单例模式</h2>
+
+<p>﻿###实现方式</p>
+
+<h4>饿汉式</h4>
+
+<p>直接进行创建</p>
+
+<h4>懒汉式</h4>
+
+<p>第一次使用时进行创建，使用synchronized修饰，避免对象不唯一</p>
+
+<h4>双重检查加锁</h4>
+
+<pre><code>public class SingleInstance {
+    private static volatile SingleInstance sInstance;
+
+    private SingleInstance() {
+    }
+
+    public static SingleInstance getInstance() {
+        if (null == sInstance) {
+            synchronized (SingleInstance.class) {
+                if (null == sInstance) {
+                    sInstance = new SingleInstance();
+                }
+            }
+        }
+        return sInstance;
+    }
+}
+
+</code></pre>
+
+<h4>利用static机制，极客型的单例</h4>
+
+<pre><code>public class SingleInstance {
+        private SingleInstance() {
+        }
+        public static SingleInstance getInstance() {
+            return SingleInstanceHolder.sInstance;
+        }
+        private static class SingleInstanceHolder {
+            private static SingleInstance sInstance = new SingleInstance();
+        }
+    }
+</code></pre>
+
+<h4>真的只有一个单例吗？</h4>
+
+<ul>
+<li>使用反射，虽然构造器是非公开的，但是在反射面前就不起作用了</li>
+<li>使用多个类加载器加载单例类，也会导致创建多个实例并存的问题</li>
+</ul>
+
+  </div>
+</body>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115892756-1');
+</script>
+
+
+</html>
