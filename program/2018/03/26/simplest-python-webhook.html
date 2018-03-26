@@ -1,0 +1,53 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=yes"/>
+    <link href="https://oyty.github.io/main.css" rel="stylesheet" type="text/css">
+    <link href="https://oyty.github.io/codehighlight.css" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+    <link rel="shortcut icon" href="https://oyty.github.io/images/logo.bmp">
+    <title></title>
+</head>
+<body>
+  <div class="content">
+    <h2>极简python github webhook</h2>
+
+<pre><code>from flask import Flask
+import os
+import sys
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def hello():
+    os.system('git pull')
+    return "hello world"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(sys.argv[1]))
+
+</code></pre>
+
+<p>实现原理，github有新的代码提交的时候会触发配置的post请求，请求到服务器后，会执行git pull命令，over。</p>
+
+<p>让程序后段运行</p>
+
+<pre><code>nohup python hook.py 11111 &amp;
+</code></pre>
+
+  </div>
+
+
+</body>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-115892756-1');
+</script>
+
+
+</html>
