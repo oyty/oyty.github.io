@@ -20,28 +20,28 @@
 
 <p>通过Response对象本身可以直接访问的对象或方法有：</p>
 
-<pre><code>def __init__(self, url, status=200, headers=None, body=b'', flags=None, request=None):
-    self.headers = Headers(headers or {})
-    self.status = int(status)
-    self._set_body(body)
-    self._set_url(url)
-    self.request = request
-    self.flags = [] if flags is None else list(flags)
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">Headers</span><span class="p">(</span><span class="n">headers</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_set_body</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_set_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">flags</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
 
-@property
-def meta(self):
-    try:
-        return self.request.meta
-    except AttributeError:
-        raise AttributeError(
-            "Response.meta not available, this response "
-            "is not tied to any request"
-        )
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">meta</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">&quot;Response.meta not available, this response &quot;</span>
+            <span class="s2">&quot;is not tied to any request&quot;</span>
+        <span class="p">)</span>
 
-url = property(_get_url, obsolete_setter(_set_url, 'url'))
+<span class="n">url</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_url</span><span class="p">,</span> <span class="n">obsolete_setter</span><span class="p">(</span><span class="n">_set_url</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">))</span>
 
-body = property(_get_body, obsolete_setter(_set_body, 'body'))
-</code></pre>
+<span class="n">body</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_body</span><span class="p">,</span> <span class="n">obsolete_setter</span><span class="p">(</span><span class="n">_set_body</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">))</span>
+</code></pre></div>
 
 <p>从上面的代码可以知道，通过Response对象可以直接访问的属性有<code>headers</code>，<code>status</code>， <code>request</code>， <code>meta</code>，meta即是属性也是方法， <code>url</code>， <code>body</code>，以上可以直接获取内容，还有一些方法比如<code>text()</code>，<code>css()</code>，<code>xpath()</code>，在子类中实现可以使用。</p>
 
