@@ -22,33 +22,29 @@
 
 <h4>双重检查加锁</h4>
 
-<p>```
-public class SingleInstance {
-    private static volatile SingleInstance sInstance;</p>
+<pre><code>public class SingleInstance {
+    private static volatile SingleInstance sInstance;
 
-<pre><code>private SingleInstance() {
-}
+    private SingleInstance() {
+    }
 
-public static SingleInstance getInstance() {
-    if (null == sInstance) {
-        synchronized (SingleInstance.class) {
-            if (null == sInstance) {
-                sInstance = new SingleInstance();
+    public static SingleInstance getInstance() {
+        if (null == sInstance) {
+            synchronized (SingleInstance.class) {
+                if (null == sInstance) {
+                    sInstance = new SingleInstance();
+                }
             }
         }
+        return sInstance;
     }
-    return sInstance;
 }
+
 </code></pre>
-
-<p>}</p>
-
-<p>```</p>
 
 <h4>利用static机制，极客型的单例</h4>
 
-<p><code>
-public class SingleInstance {
+<pre><code>public class SingleInstance {
         private SingleInstance() {
         }
         public static SingleInstance getInstance() {
@@ -58,7 +54,7 @@ public class SingleInstance {
             private static SingleInstance sInstance = new SingleInstance();
         }
     }
-</code></p>
+</code></pre>
 
 <h4>真的只有一个单例吗？</h4>
 

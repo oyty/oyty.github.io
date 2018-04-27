@@ -28,23 +28,25 @@
 
 <p>ViewStub是一个轻量级的view，没有占用空间，没有花费draw的资源，有没有参与到任何一个layout的计算与绘制里面。</p>
 
-<p>每一个ViewStub简单的包含一个android:layout的属性来指定待创建的布局文件。
-<code>
-&lt;ViewStub
-        android:id=&quot;@+id/stub_import&quot;
-        android:inflatedId=&quot;@+id/panel_import&quot;
-        android:layout=&quot;@layout/progress_overlay&quot;
-        android:layout_width=&quot;fill_parent&quot;
-        android:layout_height=&quot;wrap_content&quot;
-        android:layout_gravity=&quot;bottom&quot; /&gt;
-</code>
-当需要载入ViewStub中定义的布局时，可以使用如下方式：
-<code>
-((ViewStub) findViewById(R.id.stub_import)).setVisibility(View.VISIBLE);
+<p>每一个ViewStub简单的包含一个android:layout的属性来指定待创建的布局文件。</p>
+
+<pre><code>&lt;ViewStub
+        android:id="@+id/stub_import"
+        android:inflatedId="@+id/panel_import"
+        android:layout="@layout/progress_overlay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" /&gt;
+</code></pre>
+
+<p>当需要载入ViewStub中定义的布局时，可以使用如下方式：</p>
+
+<pre><code>((ViewStub) findViewById(R.id.stub_import)).setVisibility(View.VISIBLE);
  // or
  View importPanel = ((ViewStub) findViewById(R.id.stub_import)).inflate();
-</code>
-这样，ViewStub的层级就会消失，被创建出来的布局所替代，这个布局的ID就是ViewStub里面用<code>android:inflatedId</code>属性所定义的。</p>
+</code></pre>
+
+<p>这样，ViewStub的层级就会消失，被创建出来的布局所替代，这个布局的ID就是ViewStub里面用<code>android:inflatedId</code>属性所定义的。</p>
 
 <h3>invisible gone viewstub的区别</h3>
 
