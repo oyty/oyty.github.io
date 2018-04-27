@@ -90,9 +90,9 @@ def css(self, query):
 
 <p>虽然lxml的语法很强大，能够处理很多其它的任务，但是在这里，Selector的语法就很简单，这也决定了Selector的解析方式。
 Seelctor或者说Scrapy的数据对象有以下三种解析方式
-- xpath
-- css
-- re
+﻿<code>xpath</code>
+<code>css</code>
+<code>re</code>
 这个从Selector的源码可以看出，不喜欢<code>css</code>和<code>re</code>（主要是太麻烦了，记得东西太多，每次用还要现学），我们数据解析的话就专门使用<code>xpath</code>，下一节就来好好学习学习<code>xpath</code>的语法。</p>
 
 <pre><code>def css(self, query):
