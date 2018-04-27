@@ -12,28 +12,29 @@
   <div class="content">
     <h2>极简python github webhook</h2>
 
-<pre><code>from flask import Flask
+<p>```
+from flask import Flask
 import os
-import sys
+import sys</p>
 
-app = Flask(__name__)
+<p>app = Flask(<strong>name</strong>)</p>
 
-@app.route("/", methods=["GET", "POST"])
+<p>@app.route(&quot;/&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
 def hello():
-    os.system('git pull')
-    return "hello world"
+    os.system(&#39;git pull&#39;)
+    return &quot;hello world&quot;</p>
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(sys.argv[1]))
+<p>if <strong>name</strong> == &quot;<strong>main</strong>&quot;:
+    app.run(host=&quot;0.0.0.0&quot;, port=int(sys.argv[1]))</p>
 
-</code></pre>
+<p>```</p>
 
 <p>实现原理，github有新的代码提交的时候会触发配置的post请求，请求到服务器后，会执行git pull命令，over。</p>
 
-<p>让程序后段运行</p>
-
-<pre><code>nohup python hook.py 11111 &amp;
-</code></pre>
+<p>让程序后段运行
+<code>
+nohup python hook.py 11111 &amp;
+</code></p>
 
   </div>
 

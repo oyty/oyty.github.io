@@ -16,32 +16,31 @@
 
 <h3>Gradle Build</h3>
 
-<p>gradle编译的形式和你的配置有关：</p>
-
-<pre><code>buildTypes {
+<p>gradle编译的形式和你的配置有关：
+<code>
+buildTypes {
         release {
-            buildConfigField("boolean", "DEBUGABLE", "false")
-            buildConfigField("int", "SERVER_TYPE", "${rootProject.ext.serverEnvCode}")
+            buildConfigField(&quot;boolean&quot;, &quot;DEBUGABLE&quot;, &quot;false&quot;)
+            buildConfigField(&quot;int&quot;, &quot;SERVER_TYPE&quot;, &quot;${rootProject.ext.serverEnvCode}&quot;)
             minifyEnabled true
             zipAlignEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
             signingConfig signingConfigs.release
         }
         debug {
-            buildConfigField("boolean", "DEBUGABLE", "true")
-            buildConfigField("int", "SERVER_TYPE", "${rootProject.ext.serverEnvCode}")
-            versionNameSuffix "-debug"
+            buildConfigField(&quot;boolean&quot;, &quot;DEBUGABLE&quot;, &quot;true&quot;)
+            buildConfigField(&quot;int&quot;, &quot;SERVER_TYPE&quot;, &quot;${rootProject.ext.serverEnvCode}&quot;)
+            versionNameSuffix &quot;-debug&quot;
             minifyEnabled false
             zipAlignEnabled true
             shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile(&#39;proguard-android.txt&#39;), &#39;proguard-rules.pro&#39;
             signingConfig signingConfigs.release
         }
     }
-</code></pre>
-
-<p>上面配置了release和debug形式的编译，按钮点击后的最终执行的是debug还是release在Android Studio左下角的Build Variants中：</p>
+</code>
+上面配置了release和debug形式的编译，按钮点击后的最终执行的是debug还是release在Android Studio左下角的Build Variants中：</p>
 
 <p>一般执行运行安装默认为debug。</p>
 
