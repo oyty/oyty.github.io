@@ -21,25 +21,25 @@
 
 <p>当你创建了一个列表，你可以逐项地读取它，这就叫做迭代：</p>
 
-<pre><code>&gt;&gt;&gt; mylist = [1, 2, 3]
-&gt;&gt;&gt; for i in mylist:
-...     print i
-...
-1
-2
-3
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mylist</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="n">i</span>
+<span class="o">...</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+</code></pre></div>
 
 <p><code>mylist</code>是一个迭代对象，当你使用一个列表生成式来建立一个列表的时候，就建立了一个可迭代对象：</p>
 
-<pre><code>&gt;&gt;&gt; mylist = [x*x for x in range(3)]
-&gt;&gt;&gt; for i in mylist:
-...     print i
-...
-0
-1
-4
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mylist</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="n">i</span>
+<span class="o">...</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+</code></pre></div>
 
 <p>所以你可以使用<code>for...in...</code>语法的对象都是可迭代对象：<code>lists, strings, files...</code></p>
 
@@ -49,14 +49,14 @@
 
 <p>生成器是可以迭代的，但是<code>你只能迭代它们一次</code>，生成器并不把数据都放在内存中，它是实时地生成数据。</p>
 
-<pre><code>&gt;&gt;&gt; mygenerator = (x*x for x in range(3))
-&gt;&gt;&gt; for i in mygenerator:
-...     print i
-...
-0
-1
-4
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mygenerator</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mygenerator</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="n">i</span>
+<span class="o">...</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+</code></pre></div>
 
 <p>这和数组生成式是一样的除了<code>[]</code>和<code>()</code>的区别，由于生成器只能使用一次，所以你不能再次执行<code>for i in mygenerator</code>，先计算出0，再计算出1，然后一个接一个...</p>
 
@@ -64,21 +64,21 @@
 
 <p><code>yield</code>是一个关键字，作用和<code>return</code>差不多，差别在<code>yield</code>返回的是一个生成器。</p>
 
-<pre><code>&gt;&gt;&gt; def createGenerator():
-...     mylist = range(3)
-...     for i in mylist:
-...         yield i*i
-...
-&gt;&gt;&gt; mygenerator = createGenerator()
-&gt;&gt;&gt; print mygenerator
-&lt;generator object createGenerator at 0x103c539b0&gt;
-&gt;&gt;&gt; for i in mygenerator:
-...     print i
-...
-0
-1
-4
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">createGenerator</span><span class="p">():</span>
+<span class="o">...</span>     <span class="n">mylist</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+<span class="o">...</span>         <span class="k">yield</span> <span class="n">i</span><span class="o">*</span><span class="n">i</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mygenerator</span> <span class="o">=</span> <span class="n">createGenerator</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">mygenerator</span>
+<span class="o">&lt;</span><span class="n">generator</span> <span class="nb">object</span> <span class="n">createGenerator</span> <span class="n">at</span> <span class="mh">0x103c539b0</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mygenerator</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="n">i</span>
+<span class="o">...</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">4</span>
+</code></pre></div>
 
 <p>这个例子可能没什么用，但是它让你知道，这个函数会返回一大批你只需要使用一次的数据。</p>
 
@@ -87,27 +87,27 @@
 
 <p>我来看看程序的执行情况：</p>
 
-<pre><code>def createGenerator():
-    mylist = range(3)
-    print('aaaa')
-    for i in mylist:
-        print('bbbb')
-        yield i*i
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">createGenerator</span><span class="p">():</span>
+    <span class="n">mylist</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;aaaa&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;bbbb&#39;</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">i</span><span class="o">*</span><span class="n">i</span>
 
-mygenerator = createGenerator()
+<span class="n">mygenerator</span> <span class="o">=</span> <span class="n">createGenerator</span><span class="p">()</span>
 
-for i in mygenerator:
-    print(str(i))
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mygenerator</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
 
-aaaa
-bbbb
-0
-bbbb
-1
-bbbb
-4
-</code></pre>
+<span class="n">aaaa</span>
+<span class="n">bbbb</span>
+<span class="mi">0</span>
+<span class="n">bbbb</span>
+<span class="mi">1</span>
+<span class="n">bbbb</span>
+<span class="mi">4</span>
+</code></pre></div>
 
 <p>第一次<code>for</code>循环的时候，函数会执行，当遇到<code>yield</code>的时候，返回第一个结果，后续的迭代会返回函数中定义的循环的下一次的<code>yield</code>结果。所以，怎么理解呢？
 <strong><code>一个生成器对应的就是一个循环，每一次对生成器对象进行迭代，都是在执行这个循环</code></strong>
