@@ -11,6 +11,7 @@
 <body>
   <div class="content">
     <h2>极简python github webhook</h2>
+
 <pre><code>from flask import Flask
 import os
 import sys
@@ -24,9 +25,13 @@ def hello():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(sys.argv[1]))
+
 </code></pre>
+
 <p>实现原理，github有新的代码提交的时候会触发配置的post请求，请求到服务器后，会执行git pull命令，over。</p>
+
 <p>让程序后段运行</p>
+
 <pre><code>nohup python hook.py 11111 &amp;
 </code></pre>
 

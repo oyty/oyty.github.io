@@ -11,14 +11,20 @@
 <body>
   <div class="content">
     <p>﻿</p>
+
 <h2><code>[Scrapy]</code>从一个简单例子了解Scrapy</h2>
+
 <h4>创建Scrapy项目</h4>
+
 <p>进入到你要创建项目的目录，键入下面命令：</p>
+
 <pre><code>oyty-mbp:python oyty$ scrapy startproject tutorial
 New Scrapy project 'tutorial', using template directory '/usr/local/lib/python3.6/site-packages/scrapy/templates/project', created in:
     /Users/oyty/Documents/newworkspace/python/tutorial
 </code></pre>
+
 <p>创建了一个<code>tutorial</code>的目录，内容如下：</p>
+
 <pre><code>tutorial/
     scrapy.cfg            # deploy configuration file
 
@@ -35,10 +41,14 @@ New Scrapy project 'tutorial', using template directory '/usr/local/lib/python3.
 
         spiders/          # a directory where you'll later put your spiders
             __init__.py
+
 </code></pre>
+
 <h4>第一个爬虫</h4>
+
 <p>Scrapy使用Spiders的类去爬取一个或多个网页，这些类必须是<code>scrapy.Spider</code>的子类，一定要定义初始的请求，然后你可以选择性地解析网页里面的links，下载和解析网页内容。
 创建我们第一个爬虫类：<code>tutorial/spiders/quotes_spider.py</code></p>
+
 <pre><code>import scrapy
 
 
@@ -62,20 +72,30 @@ class QuotesSpider(scrapy.Spider):
             f.write(response.body)
         self.log('Saved file %s' % filename)
 </code></pre>
+
 <ul>
 <li><code>name</code>：作为Spider的标识，它必须是唯一的，也就是说你在同一个项目中你不能为不同的爬虫类设置相同的name。</li>
 <li><code>start_requests()</code>：必须返回可迭代的<code>Requests</code>对象（你可以返回一个requests的数组，也可以返回一个生成器），Scrapy将从这些请求开始爬取，后续的请求在这些初始请求后产生。</li>
 <li><code>parse()</code>：解析方法，每一个请求后都会被调用，参数<code>response</code>是一个<code>TextResponse</code>对象，这个对象包含了网页的内容，并且有内置了很多有用的处理网页内容的方法。</li>
 </ul>
+
 <p><code>parse()</code>方法通常用来解析response，将网页内容解析为字典，然后在网页中找到新的URLs，再创建新的爬取请求。</p>
+
 <h4>运行我们的爬虫</h4>
+
 <p>在项目的跟目录下，运行下面命令：</p>
+
 <pre><code>scrapy crawl quotes
 </code></pre>
+
 <p>第二个参数就是我们定义在爬虫类中的<code>name</code>。</p>
+
 <p>这个地方要明白一点的是，我们<code>start_requests</code>中有多个请求，这些请求是异步发起，后续的response解析也都是相互独立的，这样大大提升了爬虫的效率。</p>
+
 <h4><code>start_requests</code>的一种快捷方式</h4>
+
 <p>在<code>scrapy.Spider</code>类中已经定义了<code>start_requests</code>方法：</p>
+
 <pre><code>def __init__(self, name=None, **kwargs):
     if name is not None:
         self.name = name
@@ -101,7 +121,9 @@ def start_requests(self):
         for url in self.start_urls:
             yield Request(url, dont_filter=True)
 </code></pre>
+
 <p>从上面的代码我们可以知道，首先呢，<code>make_requests_from_url</code>这个方法已经过期了，所以啊你最好不要用了，要用<code>start_requests</code>方法。<code>start_requests</code>方法默认其实是返回了<code>start_urls</code>的迭代，而<code>start_urls</code>是Spider类的一个属性，子类自然也就获取了这个属性，所以只要在子类中初始化<code>start_urls</code>就可以了，不用再重写   <code>start_requests</code>方法。</p>
+
 <pre><code>import scrapy
 
 
