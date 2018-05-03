@@ -6,7 +6,7 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>learn-scrapy-from-an-example</title>
+    <title>[Scrapy-2] 从一个简单例子了解Scrapy</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
@@ -14,9 +14,9 @@
   <div class="content">
     <p>﻿</p>
 
-<h2 id="scrapy-2-scrapy">[Scrapy-2] 从一个简单例子了解Scrapy</h2>
+<h2>[Scrapy-2] 从一个简单例子了解Scrapy</h2>
 
-<h4 id="scrapy">创建Scrapy项目</h4>
+<h4>创建Scrapy项目</h4>
 
 <p>进入到你要创建项目的目录，键入下面命令：</p>
 
@@ -46,7 +46,7 @@
 
 </code></pre>
 
-<h4 id="-1">第一个爬虫</h4>
+<h4>第一个爬虫</h4>
 
 <p>Scrapy使用Spiders的类去爬取一个或多个网页，这些类必须是<code>scrapy.Spider</code>的子类，一定要定义初始的请求，然后你可以选择性地解析网页里面的links，下载和解析网页内容。
 创建我们第一个爬虫类：<code>tutorial/spiders/quotes_spider.py</code></p>
@@ -83,7 +83,7 @@
 
 <p><code>parse()</code>方法通常用来解析response，将网页内容解析为字典，然后在网页中找到新的URLs，再创建新的爬取请求。</p>
 
-<h4 id="-2">运行我们的爬虫</h4>
+<h4>运行我们的爬虫</h4>
 
 <p>在项目的跟目录下，运行下面命令：</p>
 
@@ -94,7 +94,7 @@
 
 <p>这个地方要明白一点的是，我们<code>start_requests</code>中有多个请求，这些请求是异步发起，后续的response解析也都是相互独立的，这样大大提升了爬虫的效率。</p>
 
-<h4 id="start_requests"><code>start_requests</code>的一种快捷方式</h4>
+<h4><code>start_requests</code>的一种快捷方式</h4>
 
 <p>在<code>scrapy.Spider</code>类中已经定义了<code>start_requests</code>方法：</p>
 
