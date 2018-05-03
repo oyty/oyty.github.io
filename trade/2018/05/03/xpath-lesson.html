@@ -6,19 +6,19 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>XPath教程</title>
+    <title>xpath-lesson</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div class="content">
-    <h2>XPath教程</h2>
+    <h2 id="xpath">XPath教程</h2>
 
 <p>[TOC]</p>
 
 <p>﻿XPath是一门在XML文档中查找信息的语言，XPath可用来在XML文档中对元素和属性进行遍历。</p>
 
-<h4>如果路径以/开头，该路径表示到一个元素的绝对路径</h4>
+<h4 id="-1">如果路径以/开头，该路径表示到一个元素的绝对路径</h4>
 
 <div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">AAA</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">BBB</span><span class="p">/&gt;</span>
@@ -41,7 +41,7 @@
 <p><strong>选择AAA的子元素DDD的所有BBB元素</strong>
 <code>/AAA/DDD/BBB</code></p>
 
-<h4>如果路径以//开头，表示选择文档中所有满足双斜线//之后规则的元素（无论层级关系）</h4>
+<h4 id="-2">如果路径以//开头，表示选择文档中所有满足双斜线//之后规则的元素（无论层级关系）</h4>
 
 <div class="codehilite"><pre><span></span><code><span class="nt">&lt;AAA&gt;</span>
     <span class="nt">&lt;BBB/&gt;</span>
@@ -65,7 +65,7 @@
 <p><strong>选择所有父元素是DDD的BBB元素</strong>
 <code>//DDD/BBB</code></p>
 
-<h4>星号*表示选择所有由星号之前的路径所定位的元素</h4>
+<h4 id="-3">星号*表示选择所有由星号之前的路径所定位的元素</h4>
 
 <div class="codehilite"><pre><span></span><code>
 </code></pre></div>

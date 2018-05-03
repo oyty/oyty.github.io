@@ -6,23 +6,23 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>单例模式</title>
+    <title>singleton-pattern</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div class="content">
-    <h2>单例模式</h2>
+    <h2 id="-1">单例模式</h2>
 
-<h4>饿汉式</h4>
+<h4 id="-2">饿汉式</h4>
 
 <p>直接进行创建</p>
 
-<h4>懒汉式</h4>
+<h4 id="-3">懒汉式</h4>
 
 <p>第一次使用时进行创建，使用synchronized修饰，避免对象不唯一</p>
 
-<h4>双重检查加锁</h4>
+<h4 id="-4">双重检查加锁</h4>
 
 <pre><code>public class SingleInstance {
     private static volatile SingleInstance sInstance;
@@ -44,7 +44,7 @@
 
 </code></pre>
 
-<h4>利用static机制，极客型的单例</h4>
+<h4 id="static">利用static机制，极客型的单例</h4>
 
 <pre><code>public class SingleInstance {
         private SingleInstance() {
@@ -58,7 +58,7 @@
     }
 </code></pre>
 
-<h4>真的只有一个单例吗？</h4>
+<h4 id="-5">真的只有一个单例吗？</h4>
 
 <ul>
 <li>使用反射，虽然构造器是非公开的，但是在反射面前就不起作用了</li>

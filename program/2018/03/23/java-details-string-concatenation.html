@@ -6,7 +6,7 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>Java中的字符串拼接</title>
+    <title>java-details-string-concatenation</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
@@ -14,11 +14,11 @@
   <div class="content">
     <p>﻿</p>
 
-<h2>Java中的字符串拼接</h2>
+<h2 id="java">Java中的字符串拼接</h2>
 
 <p>在Java中，String对象是不可变的（Immutable）。你可以创建多个某一个String对象的别名，但是这些别名的引用是相同的。</p>
 
-<h4>深入剖析字符串拼接</h4>
+<h4 id="-1">深入剖析字符串拼接</h4>
 
 <p>既然字符串是不可变的，那么当多个字符串拼接时，很自然的就会以为拼接过程中会产生多余的字符串对象。</p>
 
@@ -32,7 +32,7 @@ String info = a + b + c;
 
 <p>然而事实并非如此。</p>
 
-<h4>编译器的优化处理</h4>
+<h4 id="-2">编译器的优化处理</h4>
 
 <p>事实上，在Java代码被编译为字节码的时候，jvm会对字符串拼接进行优化处理，会先生成一个StringBuilder，然后后面的拼接就直接调用StringBuilder的append方法。</p>
 

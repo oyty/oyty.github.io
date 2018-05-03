@@ -6,17 +6,17 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>[Scrapy-3] 理解Scrapy的Response的数据结构</title>
+    <title>understand-the-construct-of-scrapy-response</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div class="content">
-    <h2>[Scrapy-3] 理解Scrapy的Response的数据结构</h2>
+    <h2 id="scrapy-3-scrapyresponse">[Scrapy-3] 理解Scrapy的Response的数据结构</h2>
 
 <p>﻿我们知道，<code>Scrapy</code>最终给到我们的是<code>response</code>对象，了解了<code>response</code>的数据结构，我们就能更好的解析利用<code>response</code>数据。</p>
 
-<h4>先来理解Response这个类</h4>
+<h4 id="response">先来理解Response这个类</h4>
 
 <p>通过Response对象本身可以直接访问的对象或方法有：</p>
 
@@ -45,7 +45,7 @@
 
 <p>从上面的代码可以知道，通过Response对象可以直接访问的属性有<code>headers</code>，<code>status</code>， <code>request</code>， <code>meta</code>，meta即是属性也是方法， <code>url</code>， <code>body</code>，以上可以直接获取内容，还有一些方法比如<code>text()</code>，<code>css()</code>，<code>xpath()</code>，在子类中实现可以使用。</p>
 
-<h4>看看Response的子类</h4>
+<h4 id="response-2">看看Response的子类</h4>
 
 <div class="codehilite"><pre><span></span><code><span class="n">Response</span>
 <span class="o">----</span><span class="n">TextResponse</span>

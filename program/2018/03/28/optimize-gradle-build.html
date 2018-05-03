@@ -6,7 +6,7 @@
     <link href="https://oyty.me/codehighlight.css" rel="stylesheet" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
     <link rel="shortcut icon" href="https://oyty.me/images/logo.ico">
-    <title>加速gradle构建</title>
+    <title>optimize-gradle-build</title>
 
     <link href="https://oyty.me/styles/github.css" rel="stylesheet" type="text/css">
 </head>
@@ -14,9 +14,9 @@
   <div class="content">
     <p>﻿</p>
 
-<h2>加速gradle构建</h2>
+<h2 id="gradle">加速gradle构建</h2>
 
-<h3>开启Daemon</h3>
+<h3 id="daemon">开启Daemon</h3>
 
 <p>Gradle Daemon是一个长期生存（3小时不被调用就会自动结束）能够提升编译速度的后台进程。它的优化原理如下：
 - 由于gradle是运行在JVM之上的，并且有较多的依赖库，长期运行在后台能够节省每次编译需要重新初始化的时间。
@@ -28,7 +28,7 @@
 org.gradle.daemon=true
 </code></pre>
 
-<h3>Configuration on demand</h3>
+<h3 id="configuration-on-demand">Configuration on demand</h3>
 
 <p>gradle编译的三个阶段：
 + 初始化，gradle支持单个或多个项目同时编译，在初始化阶段，gradle决定哪些项目参与编译，并为每一个项目创建一个project实例。
@@ -39,7 +39,7 @@ org.gradle.daemon=true
 <pre><code>org.gradle.configureondemand=true
 </code></pre>
 
-<h3>设置内存大小</h3>
+<h3 id="-1">设置内存大小</h3>
 
 <p>根据自身设备进行配置：</p>
 
@@ -48,7 +48,7 @@ org.gradle.daemon=true
 
 <p>为gradle分配最大5G内存。</p>
 
-<h3>debug构建关闭proguard</h3>
+<h3 id="debugproguard">debug构建关闭proguard</h3>
 
 <p>proguard除了代码混淆外，还可以进行代码压缩，优化和验证，代码优化会占用很多的时间，比如一个开启了代码优化的配置如下：</p>
 
@@ -83,7 +83,7 @@ org.gradle.daemon=true
 
 <p>直接点选运行按钮可以选择编译方式，具体参考-----</p>
 
-<h3>模块化项目和并行编译</h3>
+<h3 id="-2">模块化项目和并行编译</h3>
 
 <p>并行执行在多项目编译的项目中能有效提升编译的速度，但是并行的前提是每个项目已经被模块化，每个项目之间没有耦合，这个功能目前还在孵化中。。。
 开启parallel</p>
@@ -95,7 +95,7 @@ org.gradle.parallel=true
 
 </code></pre>
 
-<h3>开启offline</h3>
+<h3 id="offline">开启offline</h3>
 
 <p>开启offline后，可以强制gradle使用本地缓存的依赖，避免了网络读写操作和网络检查依赖。
 如果某个依赖不存在的时候，编译会出错，这样只需要暂时关闭offline，等依赖下载下来后，再打开就可以了。
