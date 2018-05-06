@@ -94,7 +94,8 @@
     gtag('config', 'UA-115892756-1');
 </script>
 <script>
-    document.getElementById("motto").innerText("一个人的价值, 在于他贡献了什么, 而不在于他获得了什么。——爱因斯坦");
+    var insertText = document.createTextNode("一个人的价值, 在于他贡献了什么, 而不在于他获得了什么。——爱因斯坦");
+    document.getElementById("motto").appendChild(insertText);
 
 
 </script>
