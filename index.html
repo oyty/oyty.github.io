@@ -97,13 +97,13 @@
     var mottos = [
         "一个人的价值, 在于他贡献了什么, 而不在于他获得了什么。——爱因斯坦",
         "我从来不把安逸和快乐看作是生活目的本身, 对这种伦理基础, 我称之为'猪栏的理想'。——爱因斯坦",
-        "未经反思自省的人生不值得去过&#12290;The unexamined life is not worth living.——苏格拉底 (哲学之父)",
+        "未经反思自省的人生不值得去过&#12290; The unexamined life is not worth living.——苏格拉底 (哲学之父)",
         "大多数人在20到30岁就已经过完自己的一生。<br>一过了这个年龄段, 他们就变成自己的影子, 以后的生命只是在不断重复自己。——《约翰.克里斯朵夫》罗曼.罗兰",
         "活着, 如同生命最后一天般活着;<br>学习, 如同永远活着般学习。——圣雄甘地 (印度国父)",
         "在这个世界上, 人所处的绝境, 在很多情况下, 都不是生存的绝境, 而是精神的绝境!"
     ];
     var insertText = document.createTextNode(mottos[Math.floor(Math.random() * mottos.length)]);
-    document.getElementById("motto").appendChild(insertText);
+    document.getElementById("motto").innerHTML(insertText);
 
 
 </script>
