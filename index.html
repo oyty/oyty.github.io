@@ -74,7 +74,8 @@
         </div>
         <div class="col-md-2">
             <div class="entry-box entry-box-top entry-box-bottom">
-                <p style="padding-top: 10px;" onload="refreshMotto()">
+                <p id="motto" style="padding-top: 10px;">
+
                 </p>
             </div>
         </div>
@@ -93,9 +94,8 @@
     gtag('config', 'UA-115892756-1');
 </script>
 <script>
-    function refreshMotto() {
-        return "一个人的价值, 在于他贡献了什么, 而不在于他获得了什么。——爱因斯坦"
-    }
+    document.getElementById("motto").innerText("一个人的价值, 在于他贡献了什么, 而不在于他获得了什么。——爱因斯坦");
+
 
 </script>
 
