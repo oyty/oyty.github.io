@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Java中的字符串拼接</title>
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link href="http://mingxinglai.com/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="http://mingxinglai.com/media/css/style.css">
+    <link rel="stylesheet" href="http://mingxinglai.com/media/js/code/prettify.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Java中的字符串拼接</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="http://mingxinglai.com/">home</a></span>
+            <span><a title="about" class="" href="http://mingxinglai.com/about/">about</a></span>
+            <span><a title="publication" class="" href="http://mingxinglai.com/publication/">publication</a></span>
+            <span><a title="guestbook" class="" href="http://mingxinglai.com/guestbook/">guestbook</a></span>
+            <span><a title="vitae" class="" href="http://mingxinglai.com/vitae/">vitae</a></span>
+            <span><a title="categories" class="" href="http://mingxinglai.com/categories/">categories</a></span>
+            <span><a title="tags" class="" href="http://mingxinglai.com/tags/">tags</a></span>
+            <span><a title="links" class="" href="http://mingxinglai.com/links/">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p>﻿<!--
+title: Java中的字符串拼接
+time: 2018-03-23
+category: Java
+tags: 字符串, string
+--></p>
+
+<p>在Java中，String对象是不可变的（Immutable）。你可以创建多个某一个String对象的别名，但是这些别名的引用是相同的。</p>
+
+<h4>深入剖析字符串拼接</h4>
+
+<p>既然字符串是不可变的，那么当多个字符串拼接时，很自然的就会以为拼接过程中会产生多余的字符串对象。</p>
+
+<pre><code>String a = "aaa";
+String b = "bbb";
+String c = "ccc";
+String info = a + b + c;
+</code></pre>
+
+<p>自然会以为上面字符串拼接过程中会产生多余的字符串对象<code>aaabbb</code>，如果拼接的字符串数量足够多的话，那岂不是会产生很多多余的字符串对象，这样不就严重影响性能了吗？</p>
+
+<p>然而事实并非如此。</p>
+
+<h4>编译器的优化处理</h4>
+
+<p>事实上，在Java代码被编译为字节码的时候，jvm会对字符串拼接进行优化处理，会先生成一个StringBuilder，然后后面的拼接就直接调用StringBuilder的append方法。</p>
+
+<p>这样看来，既然编译器做了优化处理，好像我们有没有必要再关注字符串拼接了，然后事实并非如此。
+我们来看一种情况</p>
+
+<pre><code>public void implicitUseStringBuilder(String[] values) { 
+    String result = ""; 
+    for (int i = 0 ; i &lt; values.length; i ++) { 
+        result += values[i]; 
+    } 
+    System.out.println(result); 
+}
+</code></pre>
+
+<p>在循环里面，字符串有拼接，这个时候jvm也会创建一个StringBuilder，但是循环流程走完后，进入下一个流程的时候又会新创建一个StringBuilder，这样就会创建大量多余的StringBuilder对象，影响性能，所以啊，还是要有好的编码习惯：</p>
+
+<pre><code>public void explicitUseStringBuider(String[] values) { 
+    StringBuilder result = new StringBuilder(); 
+    for (int i = 0; i &lt; values.length; i ++) { 
+        result.append(values[i]); 
+    } 
+}
+</code></pre>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://mingxinglai.com/cn">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-03-23">2018-03-23</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="http://mingxinglai.com/categories/#Java" title="Java">Java</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="http://mingxinglai.com/tags/# 字符串" title=" 字符串"> 字符串</a>&nbsp;
+                    
+                        <a href="http://mingxinglai.com/tags/# string
+" title=" string
+"> string
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+        <div id="message"><a href="#top">Scroll to top</a></div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/media/js/code/prettify.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("pre").addClass("prettyprint linenums");
+        prettyPrint();
+        $('.entry a').each(function () {
+            if ($(this).attr("href").indexOf("mingxinglai") == -1) {
+                $(this).attr("target", "_blank");
+            }
+        })
+    });
+</script>
+
+
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-35023741-1']);
+    _gaq.push(['_trackPageview']);
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+</html>
