@@ -235,3 +235,7 @@ embed, object, iframe {
     text-align: center;
     color: #fff;
 }
+
+code {
+    font-size: 13px;
+}
