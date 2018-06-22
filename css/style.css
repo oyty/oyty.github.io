@@ -88,7 +88,7 @@ pre {
 
 code {
     font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
-    font-size: 90%;
+    font-size: 60%;
 }
 
 pre code { border: 0px !important; padding: 0; color: #000; font-size: 1em; }
