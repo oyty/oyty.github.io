@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <link href="http://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
     <link rel="stylesheet" href="http://oyty.me/media/css/style.css">
-    <link rel="stylesheet" href="http://oyty.me/media/js/code/prettify.css">
+    <link rel="stylesheet" href="http://oyty.me/styles/default.css">
     |
 </head>
 
@@ -248,19 +248,10 @@ tags: scrapy, spider
 
 
 <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="/media/js/code/prettify.js"></script>
 
-<script type="text/javascript">
-    $(function () {
-        $("pre").addClass("prettyprint linenums");
-        prettyPrint();
-        $('.entry a').each(function () {
-            if ($(this).attr("href").indexOf("mingxinglai") == -1) {
-                $(this).attr("target", "_blank");
-            }
-        })
-    });
-</script>
+<script src="http://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
