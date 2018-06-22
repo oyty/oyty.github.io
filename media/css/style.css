@@ -13,7 +13,7 @@
 /*@import url(http://fonts.googleapis.com/css?family=Electrolize);*/
 /*@import url(http://fonts.googleapis.com/css?family=Cuprum);*/
 body {
-    font-size: 16px;
+    font-size: 15px;
     font-family: "Galdeano", "Hiragino Sans GB", "Microsoft YaHei", Trebuchet, "Trebuchet MS", Tahoma, "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
     color: #000;
     background-color: #FFFFFF;
@@ -82,7 +82,7 @@ blockquote p {
 }
 
 .content {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 24px;
 }
 
