@@ -236,6 +236,19 @@ embed, object, iframe {
     color: #fff;
 }
 
+pre {
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+    font-size: 90%;
+    padding: 5px;
+    line-height: 130%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    overflow-wrap: break-word;
+    overflow: auto;
+}
+
 code {
-    font-size: 13px;
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+    font-size: 90%;
 }
