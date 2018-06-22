@@ -73,24 +73,19 @@ pre , code, kbd, samp {
 	background-color: #F8F8F8;
 	border: 1px solid #CCC; 
 }
-
+code { color: #d14; margin: 0 2px;  }
 pre {
-    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
-    font-size: 90%;
-    padding: 5px;
-    line-height: 130%;
-    margin-left: auto;
-    margin-right: auto;
-    width: 90%;
-    overflow-wrap: break-word;
-    overflow: auto;
+	/* white-space: pre; */
+	/* white-space: pre-wrap; */
+	/* word-wrap: break-word; */
+	white-space: pre;
+	white-space: -moz-pre-wrap; /* Firefox */
+	white-space: -pre-wrap; /* ancient Opera */
+	white-space: -o-pre-wrap; /* newer Opera */
+	white-space: pre-wrap; /* Chrome; W3C standard */
+	word-wrap: break-word; /* IE */
+	padding: 5px 12px;
 }
-
-code {
-    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
-    font-size: 60%;
-}
-
 pre code { border: 0px !important; padding: 0; color: #000; font-size: 1em; }
 code { padding: 0 3px 0 3px; }
 pre { font-family: Consolas; }
