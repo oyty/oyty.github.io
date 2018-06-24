@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>HttpServletRequest的应用</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="http://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="http://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="http://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="http://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>HttpServletRequest的应用</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="http://oyty.me">home</a></span>
+            <span><a title="about" class="" href="http://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="http://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="http://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="http://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="http://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="http://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="http://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p><!--
+title: HttpServletRequest的应用
+time: 2018-06-23
+category: JavaWeb
+tags: httpservletrequest, servlet
+-->
+Web客户端的请求通过service分发后，在各个请求方法（doMethod）中都会有封装了请求信息的HttpServletRequest对象。</p>
+
+<p>HTTP请求消息的请求行可以分为三个部分：请求方式、资源路径和HTTP协议版本。</p>
+
+<h4>获取请求行的相关信息</h4>
+
+<h5>获取请求方法</h5>
+
+<pre><code>String getMethod();
+</code></pre>
+
+<p>有GET，POST，PUT等</p>
+
+<h5>获取请求URL</h5>
+
+<pre><code>String getRequestURL()
+</code></pre>
+
+<p>返回请求中的资源名部分，也就是位于URL的主机和端口之后。</p>
+
+<h5>获取请求行中的参数部分</h5>
+
+<pre><code>String getQueryString()
+</code></pre>
+
+<h4>获取网络连接信息</h4>
+
+<pre><code># 获取请求的客户机的IP地址
+String getRemoteAddr()
+
+# 获取客户机所使用的网络接口的端口号
+String getRemotePort()
+
+# 获取Web服务器上接收当前请求的网络接口的IP地址
+String getLocalAddr()
+
+# 获取请求的协议名 http、https、ftp
+String getScheme()
+
+# 获取客户端发出请求时的完整URL，包括协议名、服务器名、端口号、资源路径等信息
+String getRequestURL()
+</code></pre>
+
+<h4>获取请求头信息</h4>
+
+<p>除了常用的getHeaders方法，还有一些对应的特定的方法，如getContentType等</p>
+
+<p>BASE64并不是一种数据加密方式，而是一种数据编码方式，BASE64编码的数据是一种未加密的明文数据。BASE64是将二进制数据转换成可打印的ASCII字符的一种常见的编码方式。</p>
+
+<h4>浏览器传递参数信息的细节</h4>
+
+<p>需要注意的是，使用GET请求方式传递参数，URL的极限长度为1024个字节。如果超过了1024个字节，就不能使用GET方法，而应该使用POST方法。</p>
+
+<p>URL中的参数部分的特殊字符必须进行URL编码后才能发送给Web服务器。</p>
+
+<p>HTTP协议的POST请求方式，主要用于向Web服务器端程序提交FORM表单中的数据。当使用POST方式来提交FORM表单中的数据时，浏览器将各个表单字段元素及其数据作为HTTP消息的实体内容发送给Web服务器，而不是作为URL地址的参数传递给Web服务器。</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-06-23">2018-06-23</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="http://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="http://oyty.me/tags.html# httpservletrequest" title=" httpservletrequest"> httpservletrequest</a>&nbsp;
+                    
+                        <a href="http://oyty.me/tags.html# servlet
+" title=" servlet
+"> servlet
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="http://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
