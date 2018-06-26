@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>了解SQL</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>了解SQL</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p><!--
+title: 了解SQL
+time: 2018-06-26
+category: MySQL
+tags: mysql
+-->
+﻿### 几个基本概念
+<strong>数据库（database）</strong>
+保存有组织的数据的容器（通常是一个文件或一组文件）</p>
+
+<p><strong>表（table）</strong>
+某种特定类型数据的结构化清单</p>
+
+<p><strong>模式（schema）</strong>
+关于数据库和表的布局及特性的信息</p>
+
+<p><strong>列（column）</strong>
+表中的一个字段。所有表都是由一个或多个列组成。</p>
+
+<p><strong>数据类型（datatype）</strong>
+所容许的数据类型，每个表列都有相应的数据类型，它限制（或容许）该列中存储的数据。</p>
+
+<p><strong>行（row）</strong>
+表中的一个纪录</p>
+
+<p><strong>主键（primary key）</strong>
+一列（或一组列），其值能够唯一区分表中每个行</p>
+
+<h3>什么是SQL</h3>
+
+<p>SQL是结构化查询语言（Structured Query Language）的缩写。SQL是一种专门用来与数据库通信的语言。</p>
+
+<h3>什么是MySQL</h3>
+
+<p>数据的所有存储、检索、管理和处理都是由数据库软件-DBMS完成的，MySQL是一种DBMS，即它是一种数据库软件。</p>
+
+<h4>显示所有数据库</h4>
+
+<pre><code>mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| crashcourse        |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+</code></pre>
+
+<h4>选择数据库</h4>
+
+<pre><code>mysql&gt; use crashcourse;
+Database changed
+</code></pre>
+
+<h4>获取当前选择的数据库内可用表的列表</h4>
+
+<pre><code>show tables;
+</code></pre>
+
+<h4>获取表中的列信息</h4>
+
+<pre><code>mysql&gt; show columns from customers;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| id    | int(11)     | NO   | PRI | NULL    |       |
+| name  | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+</code></pre>
+
+<p>一种快捷方式是使用DESCRIBE语句</p>
+
+<pre><code>mysql&gt; describe customers;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| id    | int(11)     | NO   | PRI | NULL    |       |
+| name  | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+</code></pre>
+
+<h4>获取授予用户的安全权限</h4>
+
+<pre><code>mysql&gt; show grants;
++---------------------------------------------------------------------+
+| Grants for root@localhost                                           |
++---------------------------------------------------------------------+
+| GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION |
+| GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION        |
++---------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+</code></pre>
+
+<h4>允许的help语句</h4>
+
+<pre><code>mysql&gt; help show;
+Name: 'SHOW'
+Description:
+SHOW has many forms that provide information about databases, tables,
+columns, or status information about the server. This section describes
+those following:
+
+SHOW {BINARY | MASTER} LOGS
+SHOW BINLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
+SHOW CHARACTER SET [like_or_where]
+SHOW COLLATION [like_or_where]
+SHOW [FULL] COLUMNS FROM tbl_name [FROM db_name] [like_or_where]
+SHOW CREATE DATABASE db_name
+SHOW CREATE EVENT event_name
+SHOW CREATE FUNCTION func_name
+SHOW CREATE PROCEDURE proc_name
+SHOW CREATE TABLE tbl_name
+SHOW CREATE TRIGGER trigger_name
+SHOW CREATE VIEW view_name
+SHOW DATABASES [like_or_where]
+SHOW ENGINE engine_name {STATUS | MUTEX}
+SHOW [STORAGE] ENGINES
+SHOW ERRORS [LIMIT [offset,] row_count]
+SHOW EVENTS
+SHOW FUNCTION CODE func_name
+SHOW FUNCTION STATUS [like_or_where]
+SHOW GRANTS FOR user
+SHOW INDEX FROM tbl_name [FROM db_name]
+SHOW MASTER STATUS
+SHOW OPEN TABLES [FROM db_name] [like_or_where]
+SHOW PLUGINS
+SHOW PROCEDURE CODE proc_name
+SHOW PROCEDURE STATUS [like_or_where]
+SHOW PRIVILEGES
+SHOW [FULL] PROCESSLIST
+SHOW PROFILE [types] [FOR QUERY n] [OFFSET n] [LIMIT n]
+SHOW PROFILES
+SHOW RELAYLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
+SHOW SLAVE HOSTS
+SHOW SLAVE STATUS [FOR CHANNEL channel]
+SHOW [GLOBAL | SESSION] STATUS [like_or_where]
+SHOW TABLE STATUS [FROM db_name] [like_or_where]
+SHOW [FULL] TABLES [FROM db_name] [like_or_where]
+SHOW TRIGGERS [FROM db_name] [like_or_where]
+SHOW [GLOBAL | SESSION] VARIABLES [like_or_where]
+SHOW WARNINGS [LIMIT [offset,] row_count]
+
+like_or_where:
+    LIKE 'pattern'
+  | WHERE expr
+
+If the syntax for a given SHOW statement includes a LIKE 'pattern'
+part, 'pattern' is a string that can contain the SQL % and _ wildcard
+characters. The pattern is useful for restricting statement output to
+matching values.
+
+Several SHOW statements also accept a WHERE clause that provides more
+flexibility in specifying which rows to display. See
+http://dev.mysql.com/doc/refman/5.7/en/extended-show.html.
+
+URL: http://dev.mysql.com/doc/refman/5.7/en/show.html
+
+</code></pre>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-06-26">2018-06-26</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#MySQL" title="MySQL">MySQL</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="https://oyty.me/tags.html# mysql
+" title=" mysql
+"> mysql
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
