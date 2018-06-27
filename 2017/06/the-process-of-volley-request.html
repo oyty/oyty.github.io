@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Volley请求过程</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Volley请求过程</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p><!--
+title: Volley请求过程
+time: 2017-06-23
+category: Android
+tags: android, volley, hashset
+-->
+﻿#####RequestQueue，请求分发队列</p>
+
+<pre><code>
+public &lt;T&gt; Request&lt;T&gt; add(Request&lt;T&gt; request) {
+    // Tag the request as belonging to this queue and add it to the set of current requests.
+    request.setRequestQueue(this);
+    synchronized (mCurrentRequests) {
+        mCurrentRequests.add(request);
+    }
+
+    // Process requests in the order they are added.
+    request.setSequence(getSequenceNumber());
+    request.addMarker("add-to-queue");
+
+    // If the request is uncacheable, skip the cache queue and go straight to the network.
+    if (!request.shouldCache()) {
+        mNetworkQueue.add(request);
+        return request;
+    }
+
+    // Insert request into stage if there's already a request with the same cache key in flight.
+    synchronized (mWaitingRequests) {
+        String cacheKey = request.getCacheKey();
+        if (mWaitingRequests.containsKey(cacheKey)) {
+            // There is already a request in flight. Queue up.
+            Queue&lt;Request&lt;?&gt;&gt; stagedRequests = mWaitingRequests.get(cacheKey);
+            if (stagedRequests == null) {
+                stagedRequests = new LinkedList&lt;Request&lt;?&gt;&gt;();
+            }
+            stagedRequests.add(request);
+            mWaitingRequests.put(cacheKey, stagedRequests);
+            if (VolleyLog.DEBUG) {
+                VolleyLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
+            }
+        } else {
+            // Insert 'null' queue for this cacheKey, indicating there is now a request in
+            // flight.
+            mWaitingRequests.put(cacheKey, null);
+            mCacheQueue.add(request);
+        }
+        return request;
+    }
+}
+</code></pre>
+
+<p>首先将RequestQueue对象持有到每个request中，每一个request完成的时候可以从RequestQueue中移除。</p>
+
+<p>将request同步加入到当前正在处理的请求集合中mCurrentRequests。</p>
+
+<h6>HashSet底层实现</h6>
+
+<p>mCurrentRequests是一个HashSet维护的，跑题一下，解释解释HashSet</p>
+
+<p>Set不保存重复的元素，如何判断后续讲，Set的最大的应用场景应该就是判断元素的归属性，使用contains方法</p>
+
+<p>Set里面的元素是没有规律可循的，这是因为处于速度原因的考虑，HashSet使用了散列，后续解释散列，HashSet所维护的顺序与TreeSet或LinkedHashSet都不同，因为它们的实现具有不同的元素存储方式。</p>
+
+<p>TreeSet将元素存储在红黑树数据结构中，HashSet使用的散列函数，LinkedHashSet因为查询速度原因也使用了散列，但是它使用链表来维护元素的插入顺序。</p>
+
+<p>为速度而散列</p>
+
+<p>HashMap的存储原理</p>
+
+<p>首先put进一个key value的键值对的时候，先对key进行hashCode，也就是散列函数求出散列值，然后再进行hash，然后还有一些运算得出一个数组的下标，然后判断数组的该位置是否有值，没有就放入给位置，放入的是包含key和value的对象，如果已经存在的元素的话,那么在这个位置上的元素将以链表的形式存放，新加入的放在链头，最先加入的放在链尾。</p>
+
+<p>读的话，先根据key的hash找到数组的位置，然后根据key找链表里面的key和value对象组合，进而找出value。</p>
+
+<p>HashMap底层将key-value当成一个整体进行处理，这个整体就是一个Entry对象。</p>
+
+<h6>String的小特点</h6>
+
+<p>如果程序中有多个String对象，都包含相同的字符串序列，那么这些String对象都隐射到同一块内存区域。</p>
+
+<p>Request对象本身继承了Comparable接口，实现了compareTo方法，默认排序是先进先出。</p>
+
+<pre><code>/**
+ * Our comparator sorts from high to low priority, and secondarily by
+ * sequence number to provide FIFO ordering.
+ */
+@Override
+public int compareTo(Request&lt;T&gt; other) {
+    Priority left = this.getPriority();
+    Priority right = other.getPriority();
+
+    // High-priority requests are "lesser" so they are sorted to the front.
+    // Equal priorities are sorted by sequence number to provide FIFO ordering.
+    return left == right ?
+            this.mSequence - other.mSequence :
+            right.ordinal() - left.ordinal();
+}
+</code></pre>
+
+<p>主要是根据优先级来进行排序的。</p>
+
+<p>在前面添加request时，mCurrentRequests是一个HashSet，保证HashSet元素不重复的两个关键方法是equals和hashCode，在Request中并没有重写这两个方法，也就是使用的是默认实现，那么你加入的request，哪怕是同一个接口的请求，也是不一样的，同样加入到了mCurrentRequests中。</p>
+
+<p>然后给request设置一个sequence number。</p>
+
+<p>如果当前request不需要缓存，则将该请求加入到网络请求队列中mNetworkQueue。mNetworkQueue是PriorityBlockingQueue，它是JDK提供的优先级队列，本身是线程安全的，PriorityBlockingQueue存储的对象必须实现comparable接口，根据compareTo方法比较各个元素的大小，按优先级取出元素，注意优先级最小的最先取出。</p>
+
+<p>好吧，上面讲了一个请求加入的过程，这个时候要先讲讲，RequestQueue的初始化。</p>
+
+<pre><code>public static synchronized RequestQueueHelper getInstance() {
+    if (mInstance == null) {
+        mInstance = new RequestQueueHelper();
+    }
+    if (mRequestQueue == null) {
+        mRequestQueue = Volley.newRequestQueue(App.getInstance(), new OkHttpStack(new OkHttpClient()));
+    }
+    return mInstance;
+}
+</code></pre>
+
+<p>上面是最开始的Volley的初始化，看看干了什么。</p>
+
+<pre><code>/**
+ * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
+ * You may set a maximum size of the disk cache in bytes.
+ *
+ * @param context           A {@link Context} to use for creating the cache dir.
+ * @param stack             An {@link HttpStack} to use for the network, or null for default.
+ * @param maxDiskCacheBytes the maximum size of the disk cache, in bytes. Use -1 for default size.
+ * @return A started {@link RequestQueue} instance.
+ */
+public static RequestQueue newRequestQueue(Context context, HttpStack stack, int maxDiskCacheBytes) {
+    File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
+
+    String userAgent = "volley/0";
+    try {
+        String packageName = context.getPackageName();
+        PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
+        userAgent = packageName + "/" + info.versionCode;
+    } catch (NameNotFoundException e) {
+    }
+
+    if (stack == null) {
+        if (Build.VERSION.SDK_INT &gt;= 9) {
+            stack = new HurlStack();
+        } else {
+            // Prior to Gingerbread, HttpUrlConnection was unreliable.
+            // See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html
+            stack = new HttpClientStack(AndroidHttpClient.newInstance(userAgent));
+        }
+    }
+
+    Network network = new BasicNetwork(stack);
+
+    RequestQueue queue;
+    if (maxDiskCacheBytes &lt;= -1) {
+        // No maximum size specified
+        queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
+    } else {
+        // Disk cache size specified
+        queue = new RequestQueue(new DiskBasedCache(cacheDir, maxDiskCacheBytes), network);
+    }
+
+    queue.start();
+
+    return queue;
+}
+</code></pre>
+
+<p>首先初始化了缓存的目录，然后初始化了userAgent，userAgent包含了app得版本信息。
+然后初始化网络底层请求方法，如果版本大于9，就是用HurlStack也就是android官方的HttpUrlConnection，如果小于，就使用HttpClientStack，Apache的。当然我们也可以指定使用自己的，这个地方就是用OkHttpClient。</p>
+
+<p>这个时候将HttpStack包装进BasicNetwork，进行请求的处理。也就是performRequest，将请求的相关信息比如参数，header等信息集合起来。</p>
+
+<p>现在初始化RequestQueue，当然这个要判断我们是否指定了缓存的大小，如果指定了就要将缓存大小传到RequestQueue里面初始化缓存的时候处理，没有的话，应该就是默认的。</p>
+
+<p>ok，这个时候开始调用queue.start()方法了。看看干了什么。</p>
+
+<pre><code>/**
+ * Starts the dispatchers in this queue.
+ * 算是程序的入口，初始化requestqueue的时候会调用start方法，然后开始加入request
+ *
+ * 启动缓存分发，不断取出可缓存的请求
+ */
+public void start() {
+    stop();  // Make sure any currently running dispatchers are stopped.
+    // Create the cache dispatcher and start it.
+    mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
+    mCacheDispatcher.start();
+
+    // Create network dispatchers (and corresponding threads) up to the pool size.
+    for (int i = 0; i &lt; mDispatchers.length; i++) {
+        NetworkDispatcher networkDispatcher = new NetworkDispatcher(mNetworkQueue, mNetwork,
+                mCache, mDelivery);
+        mDispatchers[i] = networkDispatcher;
+        networkDispatcher.start();
+    }
+}
+</code></pre>
+
+<p>首先初始化缓存分发类，好吧，这个我们真没用到。我们每个请求都没有使用缓存
+这个时候初始化多个网络分发线程，Dispatcher就是一个线程，你可以知道它是继承于Thread的。</p>
+
+<p>默认网络请求分发线程的个数是4个。</p>
+
+<pre><code>/** Number of network request dispatcher threads to start. */
+private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
+</code></pre>
+
+<p>好了这个时候要看看这些网络线程怎么处理这些请求了。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Process</span><span class="o">.</span><span class="na">setThreadPriority</span><span class="o">(</span><span class="n">Process</span><span class="o">.</span><span class="na">THREAD_PRIORITY_BACKGROUND</span><span class="o">);</span>
+    <span class="n">Request</span><span class="o">&lt;?&gt;</span> <span class="n">request</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">long</span> <span class="n">startTimeMs</span> <span class="o">=</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+        <span class="c1">// release previous request object to avoid leaking request object when mQueue is drained.</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// Take a request from the queue.</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="n">mQueue</span><span class="o">.</span><span class="na">take</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// We may have been interrupted because it was time to quit.</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mQuit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">continue</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">request</span><span class="o">.</span><span class="na">addMarker</span><span class="o">(</span><span class="s">&quot;network-queue-take&quot;</span><span class="o">);</span>
+
+            <span class="c1">// If the request was cancelled already, do not perform the</span>
+            <span class="c1">// network request.</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">isCanceled</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">request</span><span class="o">.</span><span class="na">finish</span><span class="o">(</span><span class="s">&quot;network-discard-cancelled&quot;</span><span class="o">);</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="n">addTrafficStatsTag</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+
+            <span class="c1">// Perform the network request.</span>
+            <span class="n">NetworkResponse</span> <span class="n">networkResponse</span> <span class="o">=</span> <span class="n">mNetwork</span><span class="o">.</span><span class="na">performRequest</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="n">request</span><span class="o">.</span><span class="na">addMarker</span><span class="o">(</span><span class="s">&quot;network-http-complete&quot;</span><span class="o">);</span>
+
+            <span class="c1">// If the server returned 304 AND we delivered a response already,</span>
+            <span class="c1">// we&#39;re done -- don&#39;t deliver a second identical response.</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">networkResponse</span><span class="o">.</span><span class="na">notModified</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="na">hasHadResponseDelivered</span><span class="o">())</span> <span class="o">{</span>
+                <span class="n">request</span><span class="o">.</span><span class="na">finish</span><span class="o">(</span><span class="s">&quot;not-modified&quot;</span><span class="o">);</span>
+                <span class="k">continue</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="c1">// Parse the response here on the worker thread.</span>
+            <span class="n">Response</span><span class="o">&lt;?&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">parseNetworkResponse</span><span class="o">(</span><span class="n">networkResponse</span><span class="o">);</span>
+            <span class="n">request</span><span class="o">.</span><span class="na">addMarker</span><span class="o">(</span><span class="s">&quot;network-parse-complete&quot;</span><span class="o">);</span>
+
+            <span class="c1">// Write to cache if applicable.</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">shouldCache</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">response</span><span class="o">.</span><span class="na">cacheEntry</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">mCache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">getCacheKey</span><span class="o">(),</span> <span class="n">response</span><span class="o">.</span><span class="na">cacheEntry</span><span class="o">);</span>
+                <span class="n">request</span><span class="o">.</span><span class="na">addMarker</span><span class="o">(</span><span class="s">&quot;network-cache-written&quot;</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c1">// Post the response back.</span>
+            <span class="n">request</span><span class="o">.</span><span class="na">markDelivered</span><span class="o">();</span>
+            <span class="n">mDelivery</span><span class="o">.</span><span class="na">postResponse</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">VolleyError</span> <span class="n">volleyError</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">volleyError</span><span class="o">.</span><span class="na">setNetworkTimeMs</span><span class="o">(</span><span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTimeMs</span><span class="o">);</span>
+            <span class="n">parseAndDeliverNetworkError</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">volleyError</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">VolleyLog</span><span class="o">.</span><span class="na">e</span><span class="o">(</span><span class="n">e</span><span class="o">,</span> <span class="s">&quot;Unhandled exception %s&quot;</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+            <span class="n">VolleyError</span> <span class="n">volleyError</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VolleyError</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+            <span class="n">volleyError</span><span class="o">.</span><span class="na">setNetworkTimeMs</span><span class="o">(</span><span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTimeMs</span><span class="o">);</span>
+            <span class="n">mDelivery</span><span class="o">.</span><span class="na">postError</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">volleyError</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>ok,首先初始化请求处理开始的时间，然后从网络请求队列中取出一个请求，然后判断该请求是否已经取消，如果已经取消，直接finish掉该请求，从mCurrentRequests中移除该请求。然后可能还有finish的回调。然后continue，继续下一个请求。</p>
+
+<p>拿到请求后，开始分发这个请求，你可能还记得之前初始化了一个BasicNetwork，专门用来performRequest的，这里就派上用场了。
+然后你可能就拿到response了，然后，分发出去。</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2017-06-23">2017-06-23</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#Android" title="Android">Android</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="https://oyty.me/tags.html# android" title=" android"> android</a>&nbsp;
+                    
+                        <a href="https://oyty.me/tags.html# volley" title=" volley"> volley</a>&nbsp;
+                    
+                        <a href="https://oyty.me/tags.html# hashset
+" title=" hashset
+"> hashset
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
