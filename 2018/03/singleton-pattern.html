@@ -52,25 +52,24 @@ tags: 单例, singleinstance
 
 <h4>双重检查加锁</h4>
 
-<pre><code>public class SingleInstance {
-    private static volatile SingleInstance sInstance;
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SingleInstance</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">volatile</span> <span class="n">SingleInstance</span> <span class="n">sInstance</span><span class="o">;</span>
 
-    private SingleInstance() {
-    }
+    <span class="kd">private</span> <span class="nf">SingleInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
 
-    public static SingleInstance getInstance() {
-        if (null == sInstance) {
-            synchronized (SingleInstance.class) {
-                if (null == sInstance) {
-                    sInstance = new SingleInstance();
-                }
-            }
-        }
-        return sInstance;
-    }
-}
-
-</code></pre>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">SingleInstance</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">sInstance</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">synchronized</span> <span class="o">(</span><span class="n">SingleInstance</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="kc">null</span> <span class="o">==</span> <span class="n">sInstance</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">sInstance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SingleInstance</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">sInstance</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <h4>利用static机制，极客型的单例</h4>
 
