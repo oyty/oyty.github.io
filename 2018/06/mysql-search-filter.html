@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>MySQL 对数据进行检索，排序，操作符过滤</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>MySQL 对数据进行检索，排序，操作符过滤</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p><!--
+title: MySQL 对数据进行检索，排序，操作符过滤
+time: 2018-06-27
+category: MySQL
+tags: mysql
+-->
+﻿#### 检索数据</p>
+
+<h5>检索单个列</h5>
+
+<pre><code># 从products表中检索一个名为prod_name的列
+select prod_name from products;
+</code></pre>
+
+<h5>检索多个列</h5>
+
+<pre><code>SELECT prod_id, prod_name FROM products;
+</code></pre>
+
+<h5>检索所有列</h5>
+
+<pre><code>SELECT * FROM products;
+</code></pre>
+
+<h5>使用DISTINCT关键字</h5>
+
+<pre><code># 只返回不同的值
+SELECT DISTINCT vend_id FROM products;
+</code></pre>
+
+<h5>限制查询，LIMIT关键字</h5>
+
+<p>可用来实现分页查询。</p>
+
+<pre><code># 返回数据不多于5行
+SELECT prod_name FROM products LIMIT 5;
+
+# 返回从行5开始的5行，第一个数字为开始位置，第二个位置为要检索的行数
+SELECT prod_name FROM products LIMIT 5, 5;
+</code></pre>
+
+<ul>
+<li>检索的第一行为行0，所以LIMIT 1, 1将检索出第二行 </li>
+<li>当指定要检索的行数不够时，MySQL返回它能返回的那么多行</li>
+<li>MySQL5支持LIMIT的另一种语法，LIMIT 4 OFFSET 3意为从行3开始读取4行，和LIMIT 3, 4一样</li>
+</ul>
+
+<h4>使用完全限定的表名</h4>
+
+<pre><code>SELECT products.prod_name FROM crashcourse.products;
+</code></pre>
+
+<h4>排序检索数据</h4>
+
+<p><strong>子句（clause）</strong>SQL语句由子句构成，有些子句是必须的，有些是可选的，一个子句通常由一个关键字和所提供的数据组成。
+为了明确地排序用SELECT语句检索出的数据，可使用ORDER BY子句。</p>
+
+<h5>排序数据</h5>
+
+<pre><code># 对prod_name列以字母顺序排序数据
+SELECT prod_name FROM products ORDER BY prod_name;
+</code></pre>
+
+<h5>按多个列排序</h5>
+
+<pre><code># 先按价格排序，再按名字排序
+SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price, prod_name;
+</code></pre>
+
+<h5>指定排序方向，DESC</h5>
+
+<p>ORDER BY默认的排序是升序，还可以指定降序排序</p>
+
+<pre><code>SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC;
+
+# 先对价格降序排序，然后对名字升序排序
+SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC, prod_name;
+</code></pre>
+
+<p><em>* 如果想在多个列上进行降序排序，必须对每个列指定DESC关键字。 *</em></p>
+
+<p>与DESC相反的是ASC（Ascending），也就是升序，但是一般用不上，因为默认就是升序的。</p>
+
+<h5>使用ORDER BY和LIMIT找出一个列中最高或最低的值</h5>
+
+<pre><code>SELECT prod_price FROM products ORDER BY prod_price DESC LIMIT 1;
+</code></pre>
+
+<p><em>* ORDER BY子句须在FROM子句之前，LIMIT子句之后 *</em></p>
+
+<h4>过滤数据</h4>
+
+<h5>使用 WHERE 子句</h5>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_price = 2.50;
+</code></pre>
+
+<p>WHERE子句与 ORDER BY子句共用时，ORDER BY 在 WHERE 之后，意对过滤后的数据进行排序。
+上面 WHERE 子句使用的是相等的条件操作符，WHERE 子句还支持下面的条件操作符：
+操作符|说明
+----|----
+=|等于
+&lt;&gt;|不等于
+!=|不等于
+&lt;|小于
+&lt;=|小于等于</p>
+
+<blockquote>
+  <p>|大于
+  <code>&gt;=</code>|大于等于
+  BETWEEN|在指定的两个值之间</p>
+</blockquote>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_name = 'fuses';
++-----------+------------+
+| prod_name | prod_price |
++-----------+------------+
+| Fuses     |       3.42 |
++-----------+------------+
+1 row in set (0.00 sec)
+
+</code></pre>
+
+<p>由上面查询可以知道，MySQL 在执行匹配时默认不区分大小写，所以 fuses 和 Fuses 匹配。</p>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_price BETWEEN 5 AND 10;
+</code></pre>
+
+<h5>空值检查</h5>
+
+<p>在创建表时，表设计人员可以指定其中的列是否可以不包含值，一个列不包含值时，称其为包含空值 NULL。</p>
+
+<pre><code>mysql&gt; SELECT cust_id, cust_email FROM customers WHERE cust_email IS NULL;
++---------+------------+
+| cust_id | cust_email |
++---------+------------+
+|   10002 | NULL       |
+|   10005 | NULL       |
++---------+------------+
+2 rows in set (0.00 sec)
+</code></pre>
+
+<h4>组合 WHERE 子句</h4>
+
+<h5>AND 操作符</h5>
+
+<pre><code>SELECT prod_id, prod_price, prod_name FROM products WHERE vend_id = 1003 AND prod_price &lt;= 10;
+</code></pre>
+
+<p>当然，后面还可以继续添加 AND 操作符以组合多个条件</p>
+
+<h5>OR 操作符</h5>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003;
+</code></pre>
+
+<h5>AND OR 操作符的计算次序</h5>
+
+<p>假如我们的需求是：列出价格为1-美元（含）以上且由1002或1003制造的所有产品</p>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003 AND prod_price &gt;= 10;
+</code></pre>
+
+<p>上面的 SQL 语句并不能达到需求，因为在 SQL 中，会优先处理 AND 操作符，这和大部分的语言是一样的，所以上面的 SQL 语句的含义为：由供应商1003制造的任何价格为10美元（含）以上的产品，或者由制造商1002制造的任何产品，而不管其价格如何。</p>
+
+<p>正确的 SQL 如下，添加括号控制优先级即可：</p>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE (vend_id = 1002 OR vend_id = 1003) AND prod_price &gt;= 10;
+</code></pre>
+
+<p>在组合使用 AND 和 OR 操作符时，最好能使用括号，消除歧义，哪怕计算次序符合我们要求。</p>
+
+<h5>IN 操作符</h5>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id IN (1002, 1003) ORDER BY prod_name;
+</code></pre>
+
+<p>它虽然等同于使用 OR 子句：</p>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003 ORDER BY prod_name;
+</code></pre>
+
+<p>但是使用 IN 子句，SQL 更简洁，而且 IN 可以使用复合的查询语句，后续会提到。</p>
+
+<h5>NOT 操作符</h5>
+
+<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id NOT IN (1002, 1003) ORDER BY prod_name;
+</code></pre>
+
+<p>MySQL 支持使用 NOT 对 IN，BETWEEN，和 EXISTS 子句取反。</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-06-27">2018-06-27</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#MySQL" title="MySQL">MySQL</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="https://oyty.me/tags.html# mysql
+" title=" mysql
+"> mysql
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
