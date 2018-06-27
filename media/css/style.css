@@ -156,28 +156,28 @@ nav a:hover {
 h1 {
     padding: .5em .2em;
     font-family: "Cuprum", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: 2.0em;
+    font-size: 1.8em;
     color: #000;
 }
 
 h2 {
     padding: .5em .2em;
     font-family: "Cuprum", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: 1.8em;
+    font-size: 1.6em;
     color: #111;
 }
 
 h3 {
     padding: .5em .2em;
     font-family: "Cuprum", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: 1.6em;
+    font-size: 1.4em;
     color: #222;
 }
 
 h4 {
     padding: .5em .2em;
     font-family: "Cuprum", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: 1.4em;
+    font-size: 1.2em;
     color: #333;
 }
 
