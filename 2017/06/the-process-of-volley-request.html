@@ -41,56 +41,55 @@ time: 2017-06-23
 category: Android
 tags: android, volley, hashset
 -->
-﻿#####RequestQueue，请求分发队列</p>
+﻿###RequestQueue，请求分发队列</p>
 
-<pre><code>
-public &lt;T&gt; Request&lt;T&gt; add(Request&lt;T&gt; request) {
-    // Tag the request as belonging to this queue and add it to the set of current requests.
-    request.setRequestQueue(this);
-    synchronized (mCurrentRequests) {
-        mCurrentRequests.add(request);
-    }
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Request</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">add</span><span class="o">(</span><span class="n">Request</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Tag the request as belonging to this queue and add it to the set of current requests.</span>
+    <span class="n">request</span><span class="o">.</span><span class="na">setRequestQueue</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="kd">synchronized</span> <span class="o">(</span><span class="n">mCurrentRequests</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mCurrentRequests</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    // Process requests in the order they are added.
-    request.setSequence(getSequenceNumber());
-    request.addMarker("add-to-queue");
+    <span class="c1">// Process requests in the order they are added.</span>
+    <span class="n">request</span><span class="o">.</span><span class="na">setSequence</span><span class="o">(</span><span class="n">getSequenceNumber</span><span class="o">());</span>
+    <span class="n">request</span><span class="o">.</span><span class="na">addMarker</span><span class="o">(</span><span class="s">&quot;add-to-queue&quot;</span><span class="o">);</span>
 
-    // If the request is uncacheable, skip the cache queue and go straight to the network.
-    if (!request.shouldCache()) {
-        mNetworkQueue.add(request);
-        return request;
-    }
+    <span class="c1">// If the request is uncacheable, skip the cache queue and go straight to the network.</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">request</span><span class="o">.</span><span class="na">shouldCache</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">mNetworkQueue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">request</span><span class="o">;</span>
+    <span class="o">}</span>
 
-    // Insert request into stage if there's already a request with the same cache key in flight.
-    synchronized (mWaitingRequests) {
-        String cacheKey = request.getCacheKey();
-        if (mWaitingRequests.containsKey(cacheKey)) {
-            // There is already a request in flight. Queue up.
-            Queue&lt;Request&lt;?&gt;&gt; stagedRequests = mWaitingRequests.get(cacheKey);
-            if (stagedRequests == null) {
-                stagedRequests = new LinkedList&lt;Request&lt;?&gt;&gt;();
-            }
-            stagedRequests.add(request);
-            mWaitingRequests.put(cacheKey, stagedRequests);
-            if (VolleyLog.DEBUG) {
-                VolleyLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
-            }
-        } else {
-            // Insert 'null' queue for this cacheKey, indicating there is now a request in
-            // flight.
-            mWaitingRequests.put(cacheKey, null);
-            mCacheQueue.add(request);
-        }
-        return request;
-    }
-}
-</code></pre>
+    <span class="c1">// Insert request into stage if there&#39;s already a request with the same cache key in flight.</span>
+    <span class="kd">synchronized</span> <span class="o">(</span><span class="n">mWaitingRequests</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">cacheKey</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getCacheKey</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mWaitingRequests</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// There is already a request in flight. Queue up.</span>
+            <span class="n">Queue</span><span class="o">&lt;</span><span class="n">Request</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">stagedRequests</span> <span class="o">=</span> <span class="n">mWaitingRequests</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">stagedRequests</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">stagedRequests</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Request</span><span class="o">&lt;?&gt;&gt;();</span>
+            <span class="o">}</span>
+            <span class="n">stagedRequests</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="n">mWaitingRequests</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">,</span> <span class="n">stagedRequests</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">VolleyLog</span><span class="o">.</span><span class="na">DEBUG</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">VolleyLog</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">&quot;Request for cacheKey=%s is in flight, putting on hold.&quot;</span><span class="o">,</span> <span class="n">cacheKey</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// Insert &#39;null&#39; queue for this cacheKey, indicating there is now a request in</span>
+            <span class="c1">// flight.</span>
+            <span class="n">mWaitingRequests</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="n">mCacheQueue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">request</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <p>首先将RequestQueue对象持有到每个request中，每一个request完成的时候可以从RequestQueue中移除。</p>
 
 <p>将request同步加入到当前正在处理的请求集合中mCurrentRequests。</p>
 
-<h6>HashSet底层实现</h6>
+<h4>HashSet底层实现</h4>
 
 <p>mCurrentRequests是一个HashSet维护的，跑题一下，解释解释HashSet</p>
 
@@ -110,28 +109,28 @@ public &lt;T&gt; Request&lt;T&gt; add(Request&lt;T&gt; request) {
 
 <p>HashMap底层将key-value当成一个整体进行处理，这个整体就是一个Entry对象。</p>
 
-<h6>String的小特点</h6>
+<h4>String的小特点</h4>
 
 <p>如果程序中有多个String对象，都包含相同的字符串序列，那么这些String对象都隐射到同一块内存区域。</p>
 
 <p>Request对象本身继承了Comparable接口，实现了compareTo方法，默认排序是先进先出。</p>
 
-<pre><code>/**
- * Our comparator sorts from high to low priority, and secondarily by
- * sequence number to provide FIFO ordering.
- */
-@Override
-public int compareTo(Request&lt;T&gt; other) {
-    Priority left = this.getPriority();
-    Priority right = other.getPriority();
+<div class="codehilite"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * Our comparator sorts from high to low priority, and secondarily by</span>
+<span class="cm"> * sequence number to provide FIFO ordering.</span>
+<span class="cm"> */</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="n">Request</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">other</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Priority</span> <span class="n">left</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getPriority</span><span class="o">();</span>
+    <span class="n">Priority</span> <span class="n">right</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="na">getPriority</span><span class="o">();</span>
 
-    // High-priority requests are "lesser" so they are sorted to the front.
-    // Equal priorities are sorted by sequence number to provide FIFO ordering.
-    return left == right ?
-            this.mSequence - other.mSequence :
-            right.ordinal() - left.ordinal();
-}
-</code></pre>
+    <span class="c1">// High-priority requests are &quot;lesser&quot; so they are sorted to the front.</span>
+    <span class="c1">// Equal priorities are sorted by sequence number to provide FIFO ordering.</span>
+    <span class="k">return</span> <span class="n">left</span> <span class="o">==</span> <span class="n">right</span> <span class="o">?</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">mSequence</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="na">mSequence</span> <span class="o">:</span>
+            <span class="n">right</span><span class="o">.</span><span class="na">ordinal</span><span class="o">()</span> <span class="o">-</span> <span class="n">left</span><span class="o">.</span><span class="na">ordinal</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <p>主要是根据优先级来进行排序的。</p>
 
@@ -143,65 +142,65 @@ public int compareTo(Request&lt;T&gt; other) {
 
 <p>好吧，上面讲了一个请求加入的过程，这个时候要先讲讲，RequestQueue的初始化。</p>
 
-<pre><code>public static synchronized RequestQueueHelper getInstance() {
-    if (mInstance == null) {
-        mInstance = new RequestQueueHelper();
-    }
-    if (mRequestQueue == null) {
-        mRequestQueue = Volley.newRequestQueue(App.getInstance(), new OkHttpStack(new OkHttpClient()));
-    }
-    return mInstance;
-}
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">RequestQueueHelper</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mInstance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mInstance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestQueueHelper</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mRequestQueue</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mRequestQueue</span> <span class="o">=</span> <span class="n">Volley</span><span class="o">.</span><span class="na">newRequestQueue</span><span class="o">(</span><span class="n">App</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(),</span> <span class="k">new</span> <span class="n">OkHttpStack</span><span class="o">(</span><span class="k">new</span> <span class="n">OkHttpClient</span><span class="o">()));</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">mInstance</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <p>上面是最开始的Volley的初始化，看看干了什么。</p>
 
-<pre><code>/**
- * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
- * You may set a maximum size of the disk cache in bytes.
- *
- * @param context           A {@link Context} to use for creating the cache dir.
- * @param stack             An {@link HttpStack} to use for the network, or null for default.
- * @param maxDiskCacheBytes the maximum size of the disk cache, in bytes. Use -1 for default size.
- * @return A started {@link RequestQueue} instance.
- */
-public static RequestQueue newRequestQueue(Context context, HttpStack stack, int maxDiskCacheBytes) {
-    File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
+<div class="codehilite"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.</span>
+<span class="cm"> * You may set a maximum size of the disk cache in bytes.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param context           A {@link Context} to use for creating the cache dir.</span>
+<span class="cm"> * @param stack             An {@link HttpStack} to use for the network, or null for default.</span>
+<span class="cm"> * @param maxDiskCacheBytes the maximum size of the disk cache, in bytes. Use -1 for default size.</span>
+<span class="cm"> * @return A started {@link RequestQueue} instance.</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="n">RequestQueue</span> <span class="nf">newRequestQueue</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">HttpStack</span> <span class="n">stack</span><span class="o">,</span> <span class="kt">int</span> <span class="n">maxDiskCacheBytes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">File</span> <span class="n">cacheDir</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">context</span><span class="o">.</span><span class="na">getCacheDir</span><span class="o">(),</span> <span class="n">DEFAULT_CACHE_DIR</span><span class="o">);</span>
 
-    String userAgent = "volley/0";
-    try {
-        String packageName = context.getPackageName();
-        PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
-        userAgent = packageName + "/" + info.versionCode;
-    } catch (NameNotFoundException e) {
-    }
+    <span class="n">String</span> <span class="n">userAgent</span> <span class="o">=</span> <span class="s">&quot;volley/0&quot;</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">packageName</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getPackageName</span><span class="o">();</span>
+        <span class="n">PackageInfo</span> <span class="n">info</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getPackageManager</span><span class="o">().</span><span class="na">getPackageInfo</span><span class="o">(</span><span class="n">packageName</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+        <span class="n">userAgent</span> <span class="o">=</span> <span class="n">packageName</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">info</span><span class="o">.</span><span class="na">versionCode</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NameNotFoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">}</span>
 
-    if (stack == null) {
-        if (Build.VERSION.SDK_INT &gt;= 9) {
-            stack = new HurlStack();
-        } else {
-            // Prior to Gingerbread, HttpUrlConnection was unreliable.
-            // See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-            stack = new HttpClientStack(AndroidHttpClient.newInstance(userAgent));
-        }
-    }
+    <span class="k">if</span> <span class="o">(</span><span class="n">stack</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">Build</span><span class="o">.</span><span class="na">VERSION</span><span class="o">.</span><span class="na">SDK_INT</span> <span class="o">&gt;=</span> <span class="mi">9</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HurlStack</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c1">// Prior to Gingerbread, HttpUrlConnection was unreliable.</span>
+            <span class="c1">// See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpClientStack</span><span class="o">(</span><span class="n">AndroidHttpClient</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">userAgent</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
 
-    Network network = new BasicNetwork(stack);
+    <span class="n">Network</span> <span class="n">network</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicNetwork</span><span class="o">(</span><span class="n">stack</span><span class="o">);</span>
 
-    RequestQueue queue;
-    if (maxDiskCacheBytes &lt;= -1) {
-        // No maximum size specified
-        queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
-    } else {
-        // Disk cache size specified
-        queue = new RequestQueue(new DiskBasedCache(cacheDir, maxDiskCacheBytes), network);
-    }
+    <span class="n">RequestQueue</span> <span class="n">queue</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">maxDiskCacheBytes</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// No maximum size specified</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestQueue</span><span class="o">(</span><span class="k">new</span> <span class="n">DiskBasedCache</span><span class="o">(</span><span class="n">cacheDir</span><span class="o">),</span> <span class="n">network</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="c1">// Disk cache size specified</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestQueue</span><span class="o">(</span><span class="k">new</span> <span class="n">DiskBasedCache</span><span class="o">(</span><span class="n">cacheDir</span><span class="o">,</span> <span class="n">maxDiskCacheBytes</span><span class="o">),</span> <span class="n">network</span><span class="o">);</span>
+    <span class="o">}</span>
 
-    queue.start();
+    <span class="n">queue</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
 
-    return queue;
-}
-</code></pre>
+    <span class="k">return</span> <span class="n">queue</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <p>首先初始化了缓存的目录，然后初始化了userAgent，userAgent包含了app得版本信息。
 然后初始化网络底层请求方法，如果版本大于9，就是用HurlStack也就是android官方的HttpUrlConnection，如果小于，就使用HttpClientStack，Apache的。当然我们也可以指定使用自己的，这个地方就是用OkHttpClient。</p>
@@ -212,36 +211,36 @@ public static RequestQueue newRequestQueue(Context context, HttpStack stack, int
 
 <p>ok，这个时候开始调用queue.start()方法了。看看干了什么。</p>
 
-<pre><code>/**
- * Starts the dispatchers in this queue.
- * 算是程序的入口，初始化requestqueue的时候会调用start方法，然后开始加入request
- *
- * 启动缓存分发，不断取出可缓存的请求
- */
-public void start() {
-    stop();  // Make sure any currently running dispatchers are stopped.
-    // Create the cache dispatcher and start it.
-    mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
-    mCacheDispatcher.start();
+<div class="codehilite"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * Starts the dispatchers in this queue.</span>
+<span class="cm"> * 算是程序的入口，初始化requestqueue的时候会调用start方法，然后开始加入request</span>
+<span class="cm"> *</span>
+<span class="cm"> * 启动缓存分发，不断取出可缓存的请求</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">stop</span><span class="o">();</span>  <span class="c1">// Make sure any currently running dispatchers are stopped.</span>
+    <span class="c1">// Create the cache dispatcher and start it.</span>
+    <span class="n">mCacheDispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CacheDispatcher</span><span class="o">(</span><span class="n">mCacheQueue</span><span class="o">,</span> <span class="n">mNetworkQueue</span><span class="o">,</span> <span class="n">mCache</span><span class="o">,</span> <span class="n">mDelivery</span><span class="o">);</span>
+    <span class="n">mCacheDispatcher</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
 
-    // Create network dispatchers (and corresponding threads) up to the pool size.
-    for (int i = 0; i &lt; mDispatchers.length; i++) {
-        NetworkDispatcher networkDispatcher = new NetworkDispatcher(mNetworkQueue, mNetwork,
-                mCache, mDelivery);
-        mDispatchers[i] = networkDispatcher;
-        networkDispatcher.start();
-    }
-}
-</code></pre>
+    <span class="c1">// Create network dispatchers (and corresponding threads) up to the pool size.</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mDispatchers</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="n">NetworkDispatcher</span> <span class="n">networkDispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NetworkDispatcher</span><span class="o">(</span><span class="n">mNetworkQueue</span><span class="o">,</span> <span class="n">mNetwork</span><span class="o">,</span>
+                <span class="n">mCache</span><span class="o">,</span> <span class="n">mDelivery</span><span class="o">);</span>
+        <span class="n">mDispatchers</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">networkDispatcher</span><span class="o">;</span>
+        <span class="n">networkDispatcher</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
 
 <p>首先初始化缓存分发类，好吧，这个我们真没用到。我们每个请求都没有使用缓存
 这个时候初始化多个网络分发线程，Dispatcher就是一个线程，你可以知道它是继承于Thread的。</p>
 
 <p>默认网络请求分发线程的个数是4个。</p>
 
-<pre><code>/** Number of network request dispatcher threads to start. */
-private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="cm">/** Number of network request dispatcher threads to start. */</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">DEFAULT_NETWORK_THREAD_POOL_SIZE</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+</code></pre></div>
 
 <p>好了这个时候要看看这些网络线程怎么处理这些请求了。</p>
 
