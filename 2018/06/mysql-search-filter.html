@@ -57,25 +57,25 @@ tags: mysql
 
 <h5>检索所有列</h5>
 
-<pre><code>SELECT * FROM products;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>使用DISTINCT关键字</h5>
 
-<pre><code># 只返回不同的值
-SELECT DISTINCT vend_id FROM products;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">#</span> <span class="err">只返回不同的值</span>
+<span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">vend_id</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>限制查询，LIMIT关键字</h5>
 
 <p>可用来实现分页查询。</p>
 
-<pre><code># 返回数据不多于5行
-SELECT prod_name FROM products LIMIT 5;
+<div class="codehilite"><pre><span></span><code><span class="o">#</span> <span class="err">返回数据不多于</span><span class="mi">5</span><span class="err">行</span>
+<span class="k">SELECT</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
 
-# 返回从行5开始的5行，第一个数字为开始位置，第二个位置为要检索的行数
-SELECT prod_name FROM products LIMIT 5, 5;
-</code></pre>
+<span class="o">#</span> <span class="err">返回从行</span><span class="mi">5</span><span class="err">开始的</span><span class="mi">5</span><span class="err">行，第一个数字为开始位置，第二个位置为要检索的行数</span>
+<span class="k">SELECT</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">;</span>
+</code></pre></div>
 
 <ul>
 <li>检索的第一行为行0，所以LIMIT 1, 1将检索出第二行 </li>
@@ -85,8 +85,8 @@ SELECT prod_name FROM products LIMIT 5, 5;
 
 <h4>使用完全限定的表名</h4>
 
-<pre><code>SELECT products.prod_name FROM crashcourse.products;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">products</span><span class="p">.</span><span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">crashcourse</span><span class="p">.</span><span class="n">products</span><span class="p">;</span>
+</code></pre></div>
 
 <h4>排序检索数据</h4>
 
@@ -95,25 +95,25 @@ SELECT prod_name FROM products LIMIT 5, 5;
 
 <h5>排序数据</h5>
 
-<pre><code># 对prod_name列以字母顺序排序数据
-SELECT prod_name FROM products ORDER BY prod_name;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">#</span> <span class="err">对</span><span class="n">prod_name列以字母顺序排序数据</span>
+<span class="k">SELECT</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>按多个列排序</h5>
 
-<pre><code># 先按价格排序，再按名字排序
-SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price, prod_name;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="o">#</span> <span class="err">先按价格排序，再按名字排序</span>
+<span class="k">SELECT</span> <span class="n">prod_id</span><span class="p">,</span> <span class="n">prod_price</span><span class="p">,</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_price</span><span class="p">,</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>指定排序方向，DESC</h5>
 
 <p>ORDER BY默认的排序是升序，还可以指定降序排序</p>
 
-<pre><code>SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC;
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_id</span><span class="p">,</span> <span class="n">prod_price</span><span class="p">,</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_price</span> <span class="k">DESC</span><span class="p">;</span>
 
-# 先对价格降序排序，然后对名字升序排序
-SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC, prod_name;
-</code></pre>
+<span class="o">#</span> <span class="err">先对价格降序排序，然后对名字升序排序</span>
+<span class="k">SELECT</span> <span class="n">prod_id</span><span class="p">,</span> <span class="n">prod_price</span><span class="p">,</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_price</span> <span class="k">DESC</span><span class="p">,</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <p><em>* 如果想在多个列上进行降序排序，必须对每个列指定DESC关键字。 *</em></p>
 
@@ -121,8 +121,8 @@ SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC, pr
 
 <h5>使用ORDER BY和LIMIT找出一个列中最高或最低的值</h5>
 
-<pre><code>SELECT prod_price FROM products ORDER BY prod_price DESC LIMIT 1;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_price</span> <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
 
 <p><em>* ORDER BY子句须在FROM子句之前，LIMIT子句之后 *</em></p>
 
@@ -130,8 +130,8 @@ SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC, pr
 
 <h5>使用 WHERE 子句</h5>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_price = 2.50;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">prod_price</span> <span class="o">=</span> <span class="mi">2</span><span class="p">.</span><span class="mi">50</span><span class="p">;</span>
+</code></pre></div>
 
 <p>WHERE子句与 ORDER BY子句共用时，ORDER BY 在 WHERE 之后，意对过滤后的数据进行排序。
 上面 WHERE 子句使用的是相等的条件操作符，WHERE 子句还支持下面的条件操作符：
@@ -149,81 +149,80 @@ SELECT prod_id, prod_price, prod_name FROM products ORDER BY prod_price DESC, pr
   BETWEEN|在指定的两个值之间</p>
 </blockquote>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_name = 'fuses';
-+-----------+------------+
-| prod_name | prod_price |
-+-----------+------------+
-| Fuses     |       3.42 |
-+-----------+------------+
-1 row in set (0.00 sec)
-
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">prod_name</span> <span class="o">=</span> <span class="s1">&#39;fuses&#39;</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+<span class="o">|</span> <span class="n">prod_name</span> <span class="o">|</span> <span class="n">prod_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+<span class="o">|</span> <span class="n">Fuses</span>     <span class="o">|</span>       <span class="mi">3</span><span class="p">.</span><span class="mi">42</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</code></pre></div>
 
 <p>由上面查询可以知道，MySQL 在执行匹配时默认不区分大小写，所以 fuses 和 Fuses 匹配。</p>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE prod_price BETWEEN 5 AND 10;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">prod_price</span> <span class="k">BETWEEN</span> <span class="mi">5</span> <span class="k">AND</span> <span class="mi">10</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>空值检查</h5>
 
 <p>在创建表时，表设计人员可以指定其中的列是否可以不包含值，一个列不包含值时，称其为包含空值 NULL。</p>
 
-<pre><code>mysql&gt; SELECT cust_id, cust_email FROM customers WHERE cust_email IS NULL;
-+---------+------------+
-| cust_id | cust_email |
-+---------+------------+
-|   10002 | NULL       |
-|   10005 | NULL       |
-+---------+------------+
-2 rows in set (0.00 sec)
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">cust_email</span> <span class="k">FROM</span> <span class="n">customers</span> <span class="k">WHERE</span> <span class="n">cust_email</span> <span class="k">IS</span> <span class="k">NULL</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+------------+</span>
+<span class="o">|</span> <span class="n">cust_id</span> <span class="o">|</span> <span class="n">cust_email</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+------------+</span>
+<span class="o">|</span>   <span class="mi">10002</span> <span class="o">|</span> <span class="k">NULL</span>       <span class="o">|</span>
+<span class="o">|</span>   <span class="mi">10005</span> <span class="o">|</span> <span class="k">NULL</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</code></pre></div>
 
 <h4>组合 WHERE 子句</h4>
 
 <h5>AND 操作符</h5>
 
-<pre><code>SELECT prod_id, prod_price, prod_name FROM products WHERE vend_id = 1003 AND prod_price &lt;= 10;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_id</span><span class="p">,</span> <span class="n">prod_price</span><span class="p">,</span> <span class="n">prod_name</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span> <span class="k">AND</span> <span class="n">prod_price</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">;</span>
+</code></pre></div>
 
 <p>当然，后面还可以继续添加 AND 操作符以组合多个条件</p>
 
 <h5>OR 操作符</h5>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1002</span> <span class="k">OR</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span><span class="p">;</span>
+</code></pre></div>
 
 <h5>AND OR 操作符的计算次序</h5>
 
 <p>假如我们的需求是：列出价格为1-美元（含）以上且由1002或1003制造的所有产品</p>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003 AND prod_price &gt;= 10;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1002</span> <span class="k">OR</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span> <span class="k">AND</span> <span class="n">prod_price</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">;</span>
+</code></pre></div>
 
 <p>上面的 SQL 语句并不能达到需求，因为在 SQL 中，会优先处理 AND 操作符，这和大部分的语言是一样的，所以上面的 SQL 语句的含义为：由供应商1003制造的任何价格为10美元（含）以上的产品，或者由制造商1002制造的任何产品，而不管其价格如何。</p>
 
 <p>正确的 SQL 如下，添加括号控制优先级即可：</p>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE (vend_id = 1002 OR vend_id = 1003) AND prod_price &gt;= 10;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="p">(</span><span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1002</span> <span class="k">OR</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span><span class="p">)</span> <span class="k">AND</span> <span class="n">prod_price</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">;</span>
+</code></pre></div>
 
 <p>在组合使用 AND 和 OR 操作符时，最好能使用括号，消除歧义，哪怕计算次序符合我们要求。</p>
 
 <h5>IN 操作符</h5>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id IN (1002, 1003) ORDER BY prod_name;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1002</span><span class="p">,</span> <span class="mi">1003</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <p>它虽然等同于使用 OR 子句：</p>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id = 1002 OR vend_id = 1003 ORDER BY prod_name;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1002</span> <span class="k">OR</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <p>但是使用 IN 子句，SQL 更简洁，而且 IN 可以使用复合的查询语句，后续会提到。</p>
 
 <h5>NOT 操作符</h5>
 
-<pre><code>SELECT prod_name, prod_price FROM products WHERE vend_id NOT IN (1002, 1003) ORDER BY prod_name;
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">prod_name</span><span class="p">,</span> <span class="n">prod_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1002</span><span class="p">,</span> <span class="mi">1003</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">prod_name</span><span class="p">;</span>
+</code></pre></div>
 
 <p>MySQL 支持使用 NOT 对 IN，BETWEEN，和 EXISTS 子句取反。</p>
 
