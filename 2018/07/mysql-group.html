@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>﻿MySQL汇总数据和分组数据</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>﻿MySQL汇总数据和分组数据</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: ﻿MySQL汇总数据和分组数据
+time: 2018-07-03
+category: MySQL
+tags: mysql
+-->
+
+<h3>汇总数据</h3>
+
+<h4>聚集函数</h4>
+
+<p>我们经常需要汇总数据而不用把它们实际检索出来，比如：</p>
+
+<ul>
+<li><p>确定表中行数</p></li>
+<li><p>获得表中行组的和</p></li>
+<li><p>找出表列的最大值、最小值和平均值</p></li>
+</ul>
+
+<p>返回实际表数据是对时间和处理资源的一种浪费（带宽啊），我们只要汇总信息，为此，MySQL 提供了5个聚集函数。</p>
+
+<p><strong>聚集函数</strong>：运行在行组上，计算和返回单个值的函数。</p>
+
+<table>
+<thead>
+<tr>
+  <th>函数</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>AVG()</td>
+  <td>返回某列的平均值</td>
+</tr>
+<tr>
+  <td>COUNT()</td>
+  <td>返回某列的行数</td>
+</tr>
+<tr>
+  <td>MAX()</td>
+  <td>返回某列的最大值</td>
+</tr>
+<tr>
+  <td>MIN()</td>
+  <td>返回某列的最小值</td>
+</tr>
+<tr>
+  <td>SUM()</td>
+  <td>返回某列值之和</td>
+</tr>
+</tbody>
+</table>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">avg_price</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">avg_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="mi">16</span><span class="p">.</span><span class="mi">133571</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">avg_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">avg_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="mi">13</span><span class="p">.</span><span class="mi">212857</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div>
+
+<p>AVG 函数只能用来确定特定数值列的平均值。</p>
+
+<p><code>COUNT(*)</code>对所有行计数：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_cust</span> <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="n">num_cust</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>        <span class="mi">5</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="n">cust_email</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_cust</span> <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="n">num_cust</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>        <span class="mi">3</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">MAX</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">max_price</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">max_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span>     <span class="mi">55</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">MAX</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">min_price</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">min_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span>     <span class="mi">55</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">SUM</span><span class="p">(</span><span class="n">quantity</span><span class="p">)</span> <span class="k">AS</span> <span class="n">items_ordered</span> <span class="k">FROM</span> <span class="n">orderitems</span> <span class="k">WHERE</span> <span class="n">order_num</span> <span class="o">=</span> <span class="mi">20005</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">items_ordered</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span>            <span class="mi">19</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">SUM</span><span class="p">(</span><span class="n">item_price</span><span class="o">*</span><span class="n">quantity</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total_price</span> <span class="k">FROM</span> <span class="n">orderitems</span> <span class="k">WHERE</span> <span class="n">order_num</span> <span class="o">=</span> <span class="mi">20005</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span> <span class="n">total_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span>      <span class="mi">149</span><span class="p">.</span><span class="mi">87</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+</code></pre></div>
+
+<h4>聚集不同值</h4>
+
+<p>上面五个聚集函数都可以如下使用：</p>
+
+<ul>
+<li><p>对所有行执行计算，指定 ALL 参数或不给参数（ALL 是默认的）</p></li>
+<li><p>只包含不同的值，指定 DISTINCT 参数</p></li>
+</ul>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">avg_price</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">vend_id</span> <span class="o">=</span> <span class="mi">1003</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">avg_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="mi">15</span><span class="p">.</span><span class="mi">998000</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div>
+
+<p>DISTINCT 必须使用列名。</p>
+
+<h4>组合和聚集函数</h4>
+
+<p>SELECT 语句可以根据需要包含多个聚集函数：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_items</span><span class="p">,</span> <span class="k">MIN</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">price_min</span><span class="p">,</span> <span class="k">MAX</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">price_max</span><span class="p">,</span> <span class="k">AVG</span><span class="p">(</span><span class="n">prod_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">price_avg</span> <span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+-----------+-----------+-----------+</span>
+<span class="o">|</span> <span class="n">num_items</span> <span class="o">|</span> <span class="n">price_min</span> <span class="o">|</span> <span class="n">price_max</span> <span class="o">|</span> <span class="n">price_avg</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+-----------+-----------+-----------+</span>
+<span class="o">|</span>        <span class="mi">14</span> <span class="o">|</span>      <span class="mi">2</span><span class="p">.</span><span class="mi">50</span> <span class="o">|</span>     <span class="mi">55</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span> <span class="mi">16</span><span class="p">.</span><span class="mi">133571</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+-----------+-----------+-----------+</span>
+</code></pre></div>
+
+<h3>分组数据</h3>
+
+<p>分组允许把数据分为多个逻辑组，以便能对每个组进行聚集计算。</p>
+
+<h4>创建分组</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">vend_id</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_prods</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">vend_id</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span> <span class="n">vend_id</span> <span class="o">|</span> <span class="n">num_prods</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span>    <span class="mi">1001</span> <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1002</span> <span class="o">|</span>         <span class="mi">2</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1003</span> <span class="o">|</span>         <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1005</span> <span class="o">|</span>         <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+</code></pre></div>
+
+<p>GROUP BY 子句指示 MySQL 分组数据，然后对每个组而不是整个结果集进行聚集：</p>
+
+<ul>
+<li><p>GROUP BY 子句可以包含任意数目的列，这使得能对分组进行嵌套，为数据分组提供更细致的控制。</p></li>
+<li><p>如果分组列中具有 NULL 值，则 NULL 将作为一个分组返回，多行 NULL 值，它们将分为一组。</p></li>
+<li><p>GROUP BY 子句必须出现在 WHERE 子句之后，ORDER BY 子句之前。</p></li>
+</ul>
+
+<blockquote>
+  <p>使用 WITH ROLLUP 关键字，可以得到每个分组以及每个分组汇总级别（针对每个分组）的值：</p>
+</blockquote>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">vend_id</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_prods</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">vend_id</span> <span class="k">WITH</span> <span class="k">ROLLUP</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span> <span class="n">vend_id</span> <span class="o">|</span> <span class="n">num_prods</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span>    <span class="mi">1001</span> <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1002</span> <span class="o">|</span>         <span class="mi">2</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1003</span> <span class="o">|</span>         <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1005</span> <span class="o">|</span>         <span class="mi">2</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="k">NULL</span> <span class="o">|</span>        <span class="mi">14</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+</code></pre></div>
+
+<h4>过滤分组</h4>
+
+<p>WHERE 过滤行，HAVING 过滤分组，HAVING 支持所有 WHERE 操作符。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">orders</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">cust_id</span> <span class="k">HAVING</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+--------+</span>
+<span class="o">|</span> <span class="n">cust_id</span> <span class="o">|</span> <span class="n">orders</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+--------+</span>
+<span class="o">|</span>   <span class="mi">10001</span> <span class="o">|</span>      <span class="mi">2</span> <span class="o">|</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">orders</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">cust_id</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+--------+</span>
+<span class="o">|</span> <span class="n">cust_id</span> <span class="o">|</span> <span class="n">orders</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+--------+</span>
+<span class="o">|</span>   <span class="mi">10001</span> <span class="o">|</span>      <span class="mi">2</span> <span class="o">|</span>
+<span class="o">|</span>   <span class="mi">10003</span> <span class="o">|</span>      <span class="mi">1</span> <span class="o">|</span>
+<span class="o">|</span>   <span class="mi">10004</span> <span class="o">|</span>      <span class="mi">1</span> <span class="o">|</span>
+<span class="o">|</span>   <span class="mi">10005</span> <span class="o">|</span>      <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+--------+</span>
+</code></pre></div>
+
+<p>HAVING 分组后，对分组进行过滤。</p>
+
+<blockquote>
+  <p>HAVING 和 WHERE 的差别：</p>
+</blockquote>
+
+<p>WHERE 在数据分组前进行过滤，HAVING 在数据分组后进行过滤。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">vend_id</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num_prods</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">prod_price</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">vend_id</span> <span class="k">HAVING</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span> <span class="n">vend_id</span> <span class="o">|</span> <span class="n">num_prods</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+<span class="o">|</span>    <span class="mi">1003</span> <span class="o">|</span>         <span class="mi">4</span> <span class="o">|</span>
+<span class="o">|</span>    <span class="mi">1005</span> <span class="o">|</span>         <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+-----------+</span>
+</code></pre></div>
+
+<p>ORDER BY 和 GROUP BY 同时使用：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">order_num</span><span class="p">,</span> <span class="k">SUM</span><span class="p">(</span><span class="n">quantity</span><span class="o">*</span><span class="n">item_price</span><span class="p">)</span> <span class="k">AS</span> <span class="n">ordertotal</span> <span class="k">FROM</span> <span class="n">orderitems</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">order_num</span> <span class="k">HAVING</span> <span class="k">SUM</span><span class="p">(</span><span class="n">quantity</span><span class="o">*</span><span class="n">item_price</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">50</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">ordertotal</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+<span class="o">|</span> <span class="n">order_num</span> <span class="o">|</span> <span class="n">ordertotal</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+<span class="o">|</span>     <span class="mi">20006</span> <span class="o">|</span>      <span class="mi">55</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">|</span>     <span class="mi">20008</span> <span class="o">|</span>     <span class="mi">125</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">|</span>     <span class="mi">20005</span> <span class="o">|</span>     <span class="mi">149</span><span class="p">.</span><span class="mi">87</span> <span class="o">|</span>
+<span class="o">|</span>     <span class="mi">20007</span> <span class="o">|</span>    <span class="mi">1000</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------+</span>
+</code></pre></div>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-07-03">2018-07-03</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#MySQL" title="MySQL">MySQL</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+                    
+                        <a href="https://oyty.me/tags.html# mysql
+" title=" mysql
+"> mysql
+</a>&nbsp;
+                    
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
