@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>会话与状态管理</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>会话与状态管理</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: 会话与状态管理
+time: 2019-06-25
+category: JavaWeb
+tags: session, cookie
+-->
+
+<h3>Web应用中的会话与会话状态</h3>
+
+<p>Web应用的会话状态是指Web服务器与浏览器在会话过程中产生的状态信息，借助会话状态，Web服务器能够把属于同一会话中的一系列的请求和响应过程关联起来，使得它们之间可以相互依赖和传递信息。</p>
+
+<p>HTTP协议是一种无状态的协议，浏览器的每一次请求，对于服务器来说都是单一的，孤立的，但是很多时候我们需要一个会话流程，比如一个购物流程，那么属于该流程的一系列的请求如何向服务器表明他们是一个统一的会话。这就要求浏览器对其发出的每个请求都进行标识，属于同一个会话的请求信息都附带同样的标识号，这个标识号称之为会话ID（SessionID）。</p>
+
+<p>会话ID可以通过一种称之为Cookie的技术在请求消息中进行传递，也可以作为请求URL的附加参数进行传递，会话ID通常是Web服务器接收到某个浏览器的第一次访问时产生，并且随同响应消息一道发送给浏览器，浏览器则在以后发出的访问请求中都顺带这个SessionID。一旦开启了一个会话，服务器端程序就要为这个会话创建一个独立的存储结构来保存该会话的状态信息。</p>
+
+<h3>Cookie</h3>
+
+<p>Cookie是一种在客户端保持HTTP状态信息的技术。</p>
+
+<p>Cookie是在浏览器访问Web服务器的某个资源时，由Web服务器在HTTP响应消息头中附带传送给浏览器的一片数据，浏览器可以自行决定是否保存这片数据，如果保存了，那么以后浏览器每次访问该Web服务器时，都会在HTTP请求头中将这片数据回传给Web服务器。比如你在访问某些博客网站时，下次再次访问时，有些已经浏览过的文章标题会有特殊的标识，这就是因为浏览器存储了访问Cookie信息在本地的缘故，当然一个会话进程中，Cookie信息存在内存中，Web服务器传给浏览器什么Cookie信息，浏览器就回传什么。而浏览器是否要将Cookie信息存储在本地，是由Cookie的有效时间决定的，是存储在本地，还是只在当前会话的内存中。</p>
+
+<h4>判断浏览器是否发送Cookie请求头字段。</h4>
+
+<ul>
+<li>请求的主机名是否与存储的Cookie的Domain属性匹配</li>
+<li>请求的端口号是否在该Cookie的Port属性列表中</li>
+<li>请求的资源路径是否在该Cookie的Path属性指定的目录及子目录中</li>
+<li>该Cookie的有效期是否已过</li>
+</ul>
+
+<h3>在Servlet程序中使用Cookie</h3>
+
+<p>Servlet API提供了javax.servlet.http.Cookie类来封装Cookie信息，HttpServletResponse接口中定义了addCookie方法来向浏览器发送Cookie信息，HttpServletRequest接口中定义了一个getCookies方法来读取浏览器回送的Cookie信息。</p>
+
+<p>在Servlet程序中应该使用HttpServletRequest.getCookies来读取Cookie信息，而不是使用HttpServletRequest.getHeader方法来直接读取Cookie请求头字段。</p>
+
+<h3>Session</h3>
+
+<p>Cookie是在客户端保持状态的方案，Session是在服务器端保持状态的方案。由于客户端需要接收、记忆和回送Session的会话标识号，因此，Session可以且通常是借助Cookie来传递会话标识号。</p>
+
+<h4>Session的超时管理</h4>
+
+<p>服务器端不可能一直存储很多没有进行的会话状态，不然内存肯定爆掉，这个超时的时间限制在web.xml文件中设置，根据不同的作用域选择在某个Web程序本身的web.xml还是整个服务器的web.xml中设置。</p>
+
+<pre><code>&lt;session-config&gt;
+&lt;session-timeout&gt;30&lt;/session-timeout&gt;
+&lt;/session-config&gt;
+</code></pre>
+
+<p>以分钟为单位。</p>
+
+<h4>什么情况下调用request.getSession(false)方法</h4>
+
+<p>为了节省Web服务器端的内存资源，不要随便一个Servlet就调用request.getSession()创建HttpSession，比如有些会话只要求登录后才开始，那么就应该在登录的Servlet中创建HHttpSession对象。</p>
+
+<h4>application域与session域属性的比较</h4>
+
+<p>在ServletContext对象和HttpSession对象中设置的属性都可以被Web应用程序中的多个Servlet程序访问，从而可实现多个Servlet程序之间传递和共享信息的功能。</p>
+
+<p>存储在ServletContext对象中的属性可以被所有的Servlet程序访问和共享，而不管访问来自哪个客户端。存储在HttpSession对象中的属性也可以被所有的Servlet程序访问，但仅仅是来自一个客户端的一组访问才能共享同一个HttpSession对象，来自不同客户端的各组访问共享的HttpSession对象是不同的。HttpSession对象中存储和检索的对象代表的是各个客户端各自的会话状态。</p>
+
+<h4>利用URL重写实现Session跟踪</h4>
+
+<p>将会话标识号以参数形式附加在超链接的URL地址后面的技术成为<strong>URL重写</strong>。</p>
+
+<p>因为有些浏览器可能不支持Cookie，所以需要使用其它的方式来实现Session跟踪。Servlet规范中引入的这种补充的会话管理机制要求在响应消息的实体内容中必须包含下一次请求的超链接，并将会话标识号作为超链接的URL地址的一个特殊参数。</p>
+
+<p>当用户单击响应消息中的超链接来发出下一次请求时，如果请求消息中没有包含Cookie头字段，Servlet引擎则认为客户端不支持Cookie，它将依据请求URL的参数的会话标识号来实施会话跟踪。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">encodeURL</span><span class="o">(</span><span class="n">String</span> <span class="n">url</span><span class="o">);</span>
+<span class="kd">public</span> <span class="n">String</span> <span class="nf">encodeRedirectURL</span><span class="o">(</span><span class="n">String</span> <span class="n">url</span><span class="o">);</span>
+</code></pre></div>
+
+<p>上面两个HttpServletResponse接口中的方法用于完成URL重写。</p>
+
+<h3>Session的典型案例</h3>
+
+<h4>使用Session实现购物车</h4>
+
+<p>也就是一个list数据结构维护购物车数据。</p>
+
+<h4>利用Session防止表单提交</h4>
+
+<p>使用服务端程序可以从根本上防止表单意外或恶意提交。
+- FORM表单必须由服务器端动态生成，并且每次为FORM分配一个唯一的随机标识号，这个标识号保存在FORM的一个隐藏字段中。</p>
+
+<ul>
+<li>用户提交表单时，会提交这个隐藏的标识号，服务器端取出Session中存储的标识号与FORM中的进行比较，如果相等，则处理这个FORM，一旦处理完就删除Session中存储的这个标识号，这样下次同一个表单再次提交，由于找不到对应的Session中的标识号，服务器端程序就不会再处理。</li>
+</ul>
+
+<h3>Session的持久化管理</h3>
+
+<h4>Session的持久化</h4>
+
+<p>只要客户端访问了某个能开启会话功能的资源，Web服务器就会创建一个与该客户端对应的HttpSession对象，当访问用户很多时，服务器内就会积聚大量的HttpSession对象，消耗大量的服务器内存资源，即使用户已经离开或者已经关闭了浏览器，这个对象还在，虽然有session有超时限制，但是在超时之前，这些HttpSesion对象仍占用内存资源。</p>
+
+<p>为了提高服务器内存资源的利用率，Web服务器通常将哪些暂时不活动的但未超时的HttpSession对象转移到文件系统或数据库中保存。这就是序列化过程，等客户端激活时，再将HttpSession对象从文件系统或数据库中反序列化出来。</p>
+
+<p><strong>存储在HttpSession对象中的每个属性对象必须是可序列化的，即必须是实现了Serializable接口的对象</strong></p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-06-25">2018-06-25</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# session" title=" session"> session</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# cookie
+" title=" cookie
+"> cookie
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

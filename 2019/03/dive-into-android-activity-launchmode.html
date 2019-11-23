@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>深入理解Android中Activity的launchMode</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>深入理解Android中Activity的launchMode</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p>﻿<!--
+title: 深入理解Android中Activity的launchMode
+time: 2019-03-22
+category: Android
+tags: android, activity, launchmode
+--></p>
+
+<p>合理地设计Activity对象是否使用已有的实例还是多次创建，会使得交互设计更加良好，也能避免很多问题。</p>
+
+<h4>standard</h4>
+
+<p>launchMode的默认值，<strong>每当有一次Intent请求，就会创建一个新的Activity实例</strong>
+分两种情况，当在同一程序内部启动一个新的Activity时，新生成的实例会放入发送Intent的Task的栈的顶部，很正常的情况。
+<center>
+<img src="/images/lm_1.png" alt="" />
+</center>
+但是在跨程序之间调用的时候，在5.0前后会有所不同。
+5.0之前，跨应用之间调用，新生成的实例会放在发送Intent的Task的栈的顶部，和同一程序内部启动新Activity相同。
+<center>
+<img src="/images/lm_2.png" alt="" />
+</center>
+这种情况怪怪的，如果你打开任务管理器，你会发现显示的是发送Intent的程序，展示的却是跳转后的程序的实例。
+<center>
+<img src="/images/lm_3.png" alt="" />
+</center>
+5.0之后改进了这个表现，跨应用之间启动Activity，会创建一个新的Task，新生成的Activity会被放入新创建的Task中：
+<center>
+<img src="/images/lm_4.png" alt="" />
+</center>
+这个时候任务管理器的显示就比较合理了：
+<center>
+<img src="/images/lm_5.png" alt="" />
+</center></p>
+
+<h4>singleTop</h4>
+
+<p>singleTop和standard基本是一样的，也会创建多个实例，唯一的不同就是，如果调用的目标已经位于调用着的栈顶，则不创建实例，而是使用当前这个Activity实例，并调用这个实例的onNewIntent方法。</p>
+
+<p>singleTop的一个典型应用场景就是搜索了，如果一个搜索框，搜索后跳转到SearchActivity页面，为了更好的体验，SearchActivity页面顶部也会放一个搜索框，这样就可以重复搜索下去，因为是singleTop的启动模式，所以在你搜索了多次后，点击返回按钮，可以直接返回到之前的页面。</p>
+
+<h4>singleTask</h4>
+
+<p>这个和前面的就很不同了，<strong>使用singleTask启动模式的Activity在系统中只会存在一个实例</strong>，如果这个实例已经存在，intent就会通过onNewIntent传递到这个Activity，否则新的实例就会被创建。</p>
+
+<h5>同一程序内</h5>
+
+<p>如果系统中不存在singleTask Activity的实例，那就创建这个实例，并将这个实例放入和调用者相同的Task中并位于栈顶。
+<center>
+<img src="/images/lm_6.png" alt="" />
+</center>
+如果singleTask Activity已经存在，那么在Activity会退栈中，所有位于该Activity上面的Activity实例都会被销毁掉（销毁的时候生命周期方法会被调用），这样singleTask的实例就会位于栈顶，intent会通过onNewIntent传递到这个singleTask实例。
+<center>
+<img src="/images/lm_7.png" alt="" />
+</center>
+如果要让singleTask的实例放在一个新的task中，可以添加taskAffinity属性，配置如下：</p>
+
+<pre><code>&lt;activity
+    android:name=".SingleTaskActivity"
+    android:label="singleTask launchMode"
+    android:launchMode="singleTask"
+    android:taskAffinity=""&gt;
+&lt;/activity&gt;
+</code></pre>
+
+<p>这个时候的效果：
+<center>
+<img src="/images/lm_8.png" alt="" />
+</center></p>
+
+<h5>跨应用之间（忽略）</h5>
+
+<h4>singleInstance</h4>
+
+<p>这个模式和singleTask差不多，他们在系统中都只有一份实例，唯一不同的是存放singleInstance实例的Task只能存放一个该模式的Activity实例。如果从singleInstance实例启动另一个Activity，则新的实例会被放入其它task中。同样的，如果singleInstance被别的Activity启动，它也会被放入不同于调用者的task中。</p>
+
+<p>但是这个地方有点不一样，虽然是两个task，但是在任务管理器中却只有一个位于栈顶的task，而且当我们从任务管理器中进入这个task后，无法返回到之前的task。当然这个问题有一个解决方案：</p>
+
+<pre><code>&lt;activity
+    android:name=".SingleInstanceActivity"
+    android:label="singleInstance launchMode"
+    android:launchMode="singleInstance"
+    android:taskAffinity=""&gt;
+&lt;/activity&gt;
+</code></pre>
+
+<p>这个模式使用情况比较罕见，在Launcher中可能会使用。</p>
+
+<h4>Intent Flags</h4>
+
+<p>除了在manifest中设置启动模式外，也可以在Intent中设置flag。下面代码就可以让StandardActivity以singleTop模式启动：</p>
+
+<pre><code>Intent intent = new Intent(StandardActivity.this, StandardActivity.class);
+intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+startActivity(intent);
+</code></pre>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-03-22">2018-03-22</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#Android" title="Android">Android</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# android" title=" android"> android</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# activity" title=" activity"> activity</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# launchmode
+" title=" launchmode
+"> launchmode
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

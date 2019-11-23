@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>[Scrapy-5] 常用爬虫Spiders</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>[Scrapy-5] 常用爬虫Spiders</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: [Scrapy-5] 常用爬虫Spiders
+time: 2019-05-03
+category: 爬虫相关
+tags: scrapy, spider
+-->
+
+<h4>POST方式爬取数据</h4>
+
+<p>一般情况下使用Scrapy默认的方式就可以处理各种GET方式的数据爬取需求，当然有些场景是需要用户登录或者提供某些数据后使用POST请求才能获取到需要的数据。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">FormRequest</span><span class="p">(</span><span class="s2">&quot;http://www.example.com/login&quot;</span><span class="p">,</span>
+                                   <span class="n">formdata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span> <span class="s1">&#39;secret&#39;</span><span class="p">},</span>
+                                   <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logged_in</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="c1"># here you would extract links to follow and return Requests for</span>
+        <span class="c1"># each of them, with another callback</span>
+        <span class="k">pass</span>
+</code></pre></div>
+
+<h4>限定域名和处理日志</h4>
+
+<p>在Scrapy.Spider类中初始化了logger：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;spider&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">})</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;http://www.example.com/1.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/2.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/3.html&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;A response from </span><span class="si">%s</span><span class="s1"> just arrived!&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</code></pre></div>
+
+<h4>Spider参数</h4>
+
+<p>在命令行下使用crawl命令启动爬虫的时候可以带参数，使用<code>-a</code>指定即可</p>
+
+<pre><code>scrapy crawl myspider -a category=electronics
+</code></pre>
+
+<p>可以通过<code>__init__</code>方法获取参数：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MySpider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/categories/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">category</span><span class="p">]</span>
+        <span class="c1"># ...</span>
+</code></pre></div>
+
+<p>Spider的<strong>init</strong>方法会获取任何的Spider的参数，并且将它们复制，作为Spider的属性，所以你可以直接将参数作为属性使用：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/categories/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>
+</code></pre></div>
+
+<h4>CrawlSpider</h4>
+
+<p>这是最常用的爬取网络数据的爬虫，并且可以自定义一些列规则</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.spiders</span> <span class="kn">import</span> <span class="n">CrawlSpider</span><span class="p">,</span> <span class="n">Rule</span>
+<span class="kn">from</span> <span class="nn">scrapy.linkextractors</span> <span class="kn">import</span> <span class="n">LinkExtractor</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CrawlSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com&#39;</span><span class="p">]</span>
+
+    <span class="n">rules</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># Extract links matching &#39;category.php&#39; (but not matching &#39;subsection.php&#39;)</span>
+        <span class="c1"># and follow links from them (since no callback means follow=True by default).</span>
+        <span class="n">Rule</span><span class="p">(</span><span class="n">LinkExtractor</span><span class="p">(</span><span class="n">allow</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;category\.php&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="n">deny</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;subsection\.php&#39;</span><span class="p">,</span> <span class="p">))),</span>
+
+        <span class="c1"># Extract links matching &#39;item.php&#39; and parse them with the spider&#39;s method parse_item</span>
+        <span class="n">Rule</span><span class="p">(</span><span class="n">LinkExtractor</span><span class="p">(</span><span class="n">allow</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;item\.php&#39;</span><span class="p">,</span> <span class="p">)),</span> <span class="n">callback</span><span class="o">=</span><span class="s1">&#39;parse_item&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Hi, this is an item page! </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_id&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">re</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;ID: (\d+)&#39;</span><span class="p">)</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_name&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_description&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">item</span>
+</code></pre></div>
+
+<h4>XMLFeedSpider example</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">scrapy.spiders</span> <span class="kn">import</span> <span class="n">XMLFeedSpider</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="kn">import</span> <span class="n">TestItem</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">XMLFeedSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/feed.xml&#39;</span><span class="p">]</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="s1">&#39;iternodes&#39;</span>  <span class="c1"># This is actually unnecessary, since it&#39;s the default value</span>
+    <span class="n">itertag</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span>
+
+    <span class="k">def</span> <span class="nf">parse_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Hi, this is a &lt;</span><span class="si">%s</span><span class="s1">&gt; node!: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">itertag</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">extract</span><span class="p">()))</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TestItem</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;@id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">item</span>
+</code></pre></div>
+
+<h4>CSVFeedSpider example</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">scrapy.spiders</span> <span class="kn">import</span> <span class="n">CSVFeedSpider</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="kn">import</span> <span class="n">TestItem</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CSVFeedSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/feed.csv&#39;</span><span class="p">]</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span>
+    <span class="n">quotechar</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Hi, this is a row!: </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TestItem</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">item</span>
+</code></pre></div>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-05-03">2018-05-03</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#爬虫相关" title="爬虫相关">爬虫相关</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# scrapy" title=" scrapy"> scrapy</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# spider
+" title=" spider
+"> spider
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

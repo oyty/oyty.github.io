@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Tomcat基础</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Tomcat基础</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: Tomcat基础
+time: 2019-05-29
+category: JavaWeb
+tags: tomcat
+-->
+
+<h4>Tomcat的启动和停止</h4>
+
+<p>在官网下载解压后，通过命令启动和关闭Tomcat</p>
+
+<p>启动命令</p>
+
+<pre><code>
+sudo sh startup.sh
+
+or
+
+sudo ./startup.sh start
+
+</code></pre>
+
+<p>关闭命令</p>
+
+<pre><code>
+sudo sh shutdown.sh
+
+or
+
+sudo ./shutdown.sh stop
+
+</code></pre>
+
+<p>执行过程中，可能会报以下错误，需要授权</p>
+
+<pre><code>
+oyty-mbp:bin oyty$ sudo sh startup.sh 
+
+Password:
+
+Cannot find ./catalina.sh
+
+The file is absent or does not have execute permission
+
+This file is needed to run this program
+
+</code></pre>
+
+<p>授权：</p>
+
+<pre><code>
+sudo chmod 755 catalina.sh
+
+</code></pre>
+
+<p>再次启动即可。</p>
+
+<pre><code>
+oyty-mbp:bin oyty$ sudo sh startup.sh 
+
+Using CATALINA_BASE:   /Users/oyty/Documents/tomcat
+
+Using CATALINA_HOME:   /Users/oyty/Documents/tomcat
+
+Using CATALINA_TMPDIR: /Users/oyty/Documents/tomcat/temp
+
+Using JRE_HOME:        /Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home
+
+Using CLASSPATH:       /Users/oyty/Documents/tomcat/bin/bootstrap.jar:/Users/oyty/Documents/tomcat/bin/tomcat-juli.jar
+
+Tomcat started.
+
+</code></pre>
+
+<p>Tomcat启动成功，浏览器输入localhost:8080</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-5670d2c983324b72.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Tomcat启动成功" /></p>
+
+<p>验证ok！</p>
+
+<h4>设置Web站点的根目录</h4>
+
+<h5>默认ROOT目录</h5>
+
+<p><code>&lt;Tomcat 主目录&gt;/webapps/ROOT</code> 会自动映射为Web站点的虚拟根目录，由于一个Web站点只有一个根目录，所以可以直接将ROOT作为根目录，在建立我们自己的站点时，可以将ROOT目录下的内容替换为我们自己要发布的内容。</p>
+
+<h5>修改<Tomcat 主目录&gt;/conf/server.xml配置文件</h5>
+
+<div class="codehilite"><pre><span></span><code><span class="o">&lt;</span><span class="n">Host</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;localhost&quot;</span> <span class="n">appBase</span><span class="o">=</span><span class="s">&quot;webapps&quot;</span>
+
+            <span class="n">unpackWARs</span><span class="o">=</span><span class="s">&quot;true&quot;</span> <span class="n">autoDeploy</span><span class="o">=</span><span class="s">&quot;true&quot;</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="n">Context</span> <span class="n">path</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="n">docBase</span><span class="o">=</span><span class="s">&quot;/Users/oyty/Documents/webtest/&quot;</span> <span class="n">debug</span><span class="o">=</span><span class="s">&quot;0&quot;</span> <span class="n">reloadable</span><span class="o">=</span><span class="s">&quot;true&quot;</span><span class="o">/&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">Host</span><span class="o">&gt;</span>
+</code></pre></div>
+
+<p>在Host节点中添加Context节点，docBase指向的就是你本地文件系统中需要映射为web根目录的目录。</p>
+
+<p>修改server.xml文件后，需要重新Tomcat生效。</p>
+
+<p>一旦一个文件目录映射为web站点的根目录，它的子目录也可以作为web站点的子目录进行访问。</p>
+
+<h4>设置web站点的虚拟子目录</h4>
+
+<p>在上面的内容中，我们通过在<code>Host</code>标签下添加<code>Context</code>标签设置了web站点的根目录，一个<code>Host</code>标签表示一个web站点，一个<code>Context</code>标签表示一个虚拟web目录，一个web站点下可以有多个虚拟web目录，所以可以配置多个<code>Context</code>标签。</p>
+
+<pre><code>
+&lt;Context path="" docBase="/Users/oyty/Documents/webtest/" debug="0" reloadable="true"/&gt;
+
+</code></pre>
+
+<p>path为空表示设置为根目录。</p>
+
+<pre><code>
+&lt;Context path="/virtual/subpath" docBase="/Users/oyty/Documents/webtest/book" debug="0" reloadable="true"/&gt;
+
+</code></pre>
+
+<p>上面配置设置了一个虚拟web子目录，名称为<code>/virtual/subpath</code>，对应的本地文件系统路径为<code>/Users/oyty/Documents/webtest/book</code>，虚拟web目录和本地文件系统目录没有对应关系，两者可以不一致。</p>
+
+<h4>war文件发布</h4>
+
+<p>一个虚拟目录就是一个独立的web应用程序。为了便于web应用程序的发布，通常将一个web应用程序所对应的整个目录打包成一个jar格式的压缩文件，这个文件称之为war（Web Application Archive）文件。为了见名知意，war文件通常以<code>.war</code>作为扩展名，但它实际上就是一个jar文件。在上面的虚拟站点配置中，对应的本地文件系统目录可以直接为war文件的地址。</p>
+
+<h5>将web目录打包成war文件</h5>
+
+<ul>
+<li><p>进入到web应用程序根目录对应的本地文件系统目录<code>/Users/oyty/Documents/webtest</code></p></li>
+<li><p>执行下面命令</p></li>
+</ul>
+
+<pre><code>
+jar -cvf mywebwar.war .
+
+</code></pre>
+
+<p><code>.</code>表示当前目录，上面命令表示将<code>webtest</code>目录中的所有内容压缩到<code>mywebwar.war</code>文件中，但不包含<code>webtest</code>目录本身。</p>
+
+<ul>
+<li>这样将mywebwar.war文件丢到你需要映射为web根目录的文件夹中即可。</li>
+</ul>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-05-29">2018-05-29</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# tomcat
+" title=" tomcat
+"> tomcat
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

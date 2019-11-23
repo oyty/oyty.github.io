@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>﻿[Scrapy-6] XPath使用的一个坑</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>﻿[Scrapy-6] XPath使用的一个坑</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p>﻿<!--
+title: ﻿[Scrapy-6] XPath使用的一个坑
+time: 2019-05-04
+category: 爬虫相关
+tags: scrapy, xpath
+-->
+﻿先上代码：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.selector</span> <span class="kn">import</span> <span class="n">Selector</span>
+
+<span class="k">class</span> <span class="nc">QuoteSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;quotes&quot;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;http://quotes.toscrape.com/&quot;</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">quotes</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//div[@class=&#39;quote&#39;]&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">quote</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">quote</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//span[@class=&#39;text&#39;]/text()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extract_first</span><span class="p">())</span>
+</code></pre></div>
+
+<p>再看看网页的结构</p>
+
+<p><img src="/images/xpath-html.jpeg" alt="" /></p>
+
+<p>我们自然想当然的以为，第一步xpath，将包含quote的所有div都找出来，然后遍历每一个div，再到每一个div中找到quote，这样打印出来的应该是当前页面所有的quote。Try it。</p>
+
+<p>你会发现打印出来的都是第一个div里面的quote，这就是坑了。
+我来试着解释一下，当前的代码处理xpath是分段处理了的，只要没有extract或者extract_first，xptah的处理都是一个整体，也就是说，循环里面的处理实际上是连接了上面的xpath处理，所以处理对象是整个response，这样每次取得就是第一条数据，那么如何实现我们想要的那种处理方式呢，先将xpath的数据extract出来，这样就是固定的区域了，然后再包装成Selector对象进行xpath处理，代码如下：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.selector</span> <span class="kn">import</span> <span class="n">Selector</span>
+
+
+<span class="k">class</span> <span class="nc">QuoteSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;quotes&quot;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;http://quotes.toscrape.com/&quot;</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">quotes</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//div[@class=&#39;quote&#39;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">quote</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">Selector</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">quote</span><span class="p">)</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//span[@class=&#39;text&#39;]/text()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extract_first</span><span class="p">())</span>
+</code></pre></div>
+
+<p><code>That's it.</code></p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-05-04">2018-05-04</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#爬虫相关" title="爬虫相关">爬虫相关</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# scrapy" title=" scrapy"> scrapy</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# xpath
+" title=" xpath
+"> xpath
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

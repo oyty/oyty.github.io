@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>[Scrapy-2] 从一个简单例子了解Scrapy</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>[Scrapy-2] 从一个简单例子了解Scrapy</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p>﻿<!--
+title: [Scrapy-2] 从一个简单例子了解Scrapy
+time: 2019-04-27
+category: 爬虫相关
+tags: scrapy
+--></p>
+
+<h4>创建Scrapy项目</h4>
+
+<p>进入到你要创建项目的目录，键入下面命令：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">oyty</span><span class="o">-</span><span class="n">mbp</span><span class="p">:</span><span class="n">python</span> <span class="n">oyty</span><span class="err">$</span> <span class="n">scrapy</span> <span class="n">startproject</span> <span class="n">tutorial</span>
+<span class="n">New</span> <span class="n">Scrapy</span> <span class="n">project</span> <span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="n">using</span> <span class="n">template</span> <span class="n">directory</span> <span class="s1">&#39;/usr/local/lib/python3.6/site-packages/scrapy/templates/project&#39;</span><span class="p">,</span> <span class="n">created</span> <span class="ow">in</span><span class="p">:</span>
+    <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">oyty</span><span class="o">/</span><span class="n">Documents</span><span class="o">/</span><span class="n">newworkspace</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">tutorial</span>
+</code></pre></div>
+
+<p>创建了一个<code>tutorial</code>的目录，内容如下：</p>
+
+<pre><code>tutorial/
+    scrapy.cfg            # deploy configuration file
+
+    tutorial/             # project's Python module, you'll import your code from here
+        __init__.py
+
+        items.py          # project items definition file
+
+        middlewares.py    # project middlewares file
+
+        pipelines.py      # project pipelines file
+
+        settings.py       # project settings file
+
+        spiders/          # a directory where you'll later put your spiders
+            __init__.py
+
+</code></pre>
+
+<h4>第一个爬虫</h4>
+
+<p>Scrapy使用Spiders的类去爬取一个或多个网页，这些类必须是<code>scrapy.Spider</code>的子类，一定要定义初始的请求，然后你可以选择性地解析网页里面的links，下载和解析网页内容。
+创建我们第一个爬虫类：<code>tutorial/spiders/quotes_spider.py</code></p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">QuotesSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;quotes&quot;</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;http://quotes.toscrape.com/page/1/&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;http://quotes.toscrape.com/page/2/&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;quotes-</span><span class="si">%s</span><span class="s1">.html&#39;</span> <span class="o">%</span> <span class="n">page</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Saved file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li><code>name</code>：作为Spider的标识，它必须是唯一的，也就是说你在同一个项目中你不能为不同的爬虫类设置相同的name。</li>
+<li><code>start_requests()</code>：必须返回可迭代的<code>Requests</code>对象（你可以返回一个requests的数组，也可以返回一个生成器），Scrapy将从这些请求开始爬取，后续的请求在这些初始请求后产生。</li>
+<li><code>parse()</code>：解析方法，每一个请求后都会被调用，参数<code>response</code>是一个<code>TextResponse</code>对象，这个对象包含了网页的内容，并且有内置了很多有用的处理网页内容的方法。</li>
+</ul>
+
+<p><code>parse()</code>方法通常用来解析response，将网页内容解析为字典，然后在网页中找到新的URLs，再创建新的爬取请求。</p>
+
+<h4>运行我们的爬虫</h4>
+
+<p>在项目的跟目录下，运行下面命令：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">quotes</span>
+</code></pre></div>
+
+<p>第二个参数就是我们定义在爬虫类中的<code>name</code>。</p>
+
+<p>这个地方要明白一点的是，我们<code>start_requests</code>中有多个请求，这些请求是异步发起，后续的response解析也都是相互独立的，这样大大提升了爬虫的效率。</p>
+
+<h4><code>start_requests</code>的一种快捷方式</h4>
+
+<p>在<code>scrapy.Spider</code>类中已经定义了<code>start_requests</code>方法：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> must have a name&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;start_urls&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+    <span class="k">if</span> <span class="n">method_is_overridden</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Spider</span><span class="p">,</span> <span class="s1">&#39;make_requests_from_url&#39;</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Spider.make_requests_from_url method is deprecated; it &quot;</span>
+            <span class="s2">&quot;won&#39;t be called in future Scrapy releases. Please &quot;</span>
+            <span class="s2">&quot;override Spider.start_requests method instead (see </span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_requests_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dont_filter</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div>
+
+<p>从上面的代码我们可以知道，首先呢，<code>make_requests_from_url</code>这个方法已经过期了，所以啊你最好不要用了，要用<code>start_requests</code>方法。<code>start_requests</code>方法默认其实是返回了<code>start_urls</code>的迭代，而<code>start_urls</code>是Spider类的一个属性，子类自然也就获取了这个属性，所以只要在子类中初始化<code>start_urls</code>就可以了，不用再重写   <code>start_requests</code>方法。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">QuotesSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;quotes&quot;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;http://quotes.toscrape.com/page/1/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://quotes.toscrape.com/page/2/&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;quotes-</span><span class="si">%s</span><span class="s1">.html&#39;</span> <span class="o">%</span> <span class="n">page</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+</code></pre></div>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-04-27">2018-04-27</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#爬虫相关" title="爬虫相关">爬虫相关</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# scrapy
+" title=" scrapy
+"> scrapy
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

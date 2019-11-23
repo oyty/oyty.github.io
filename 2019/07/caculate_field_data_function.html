@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>计算字段和数据处理函数</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>计算字段和数据处理函数</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: 计算字段和数据处理函数
+time: 2019-07-02
+category: MySQL
+tags: mysql
+-->
+
+<h4>拼接字段</h4>
+
+<p>MySQL 的不同之处：多数 DBMS 使用+或||来实现拼接，MySQL 使用 <code>Concat()</code>函数来实现。</p>
+
+<h5>拼接两个列</h5>
+
+<p>将两列拼接成一个展示形式：vend<em>name (vend</em>country)</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="n">vend_name</span><span class="p">,</span> <span class="s1">&#39; (&#39;</span><span class="p">,</span> <span class="n">vend_country</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">vendors</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">vend_name</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">--------------------------------------------+</span>
+<span class="o">|</span> <span class="n">CONCAT</span><span class="p">(</span><span class="n">vend_name</span><span class="p">,</span> <span class="s1">&#39; (&#39;</span><span class="p">,</span> <span class="n">vend_country</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------------+</span>
+<span class="o">|</span> <span class="n">ACME</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>                                 <span class="o">|</span>
+<span class="o">|</span> <span class="n">Anvils</span> <span class="n">R</span> <span class="n">Us</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>                          <span class="o">|</span>
+<span class="o">|</span> <span class="n">Furball</span> <span class="n">Inc</span><span class="p">.</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>                         <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jet</span> <span class="k">Set</span> <span class="p">(</span><span class="n">England</span><span class="p">)</span>                          <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jouets</span> <span class="n">Et</span> <span class="n">Ours</span> <span class="p">(</span><span class="n">France</span><span class="p">)</span>                    <span class="o">|</span>
+<span class="o">|</span> <span class="n">LT</span> <span class="n">Supplies</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>                          <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------------+</span>
+</code></pre></div>
+
+<h5>删除多余的空格 RTRIM</h5>
+
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="n">RTRIM</span><span class="p">(</span><span class="n">vend_name</span><span class="p">),</span> <span class="s1">&#39; (&#39;</span><span class="p">,</span> <span class="n">vend_country</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">vendors</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">vend_name</span><span class="p">;</span>
+</code></pre></div>
+
+<p>显然 MySQL 还支持<code>LTRIM</code>和<code>TRIM</code>分别删除左边的空格和两边的空格。</p>
+
+<h4>使用别名AS</h4>
+
+<p>签名拼接两列的结果可以看到，拼接后的列名是<code>CONCAT(vend_name, ' (', vend_country, ')')</code>，这显然很不友好，所以我们可以使用别名。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="n">RTRIM</span><span class="p">(</span><span class="n">vend_name</span><span class="p">),</span> <span class="s1">&#39; (&#39;</span><span class="p">,</span> <span class="n">RTRIM</span><span class="p">(</span><span class="n">vend_country</span><span class="p">),</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">vend_title</span> <span class="k">FROM</span> <span class="n">vendors</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">vend_name</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span> <span class="n">vend_title</span>              <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span> <span class="n">ACME</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>              <span class="o">|</span>
+<span class="o">|</span> <span class="n">Anvils</span> <span class="n">R</span> <span class="n">Us</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">Furball</span> <span class="n">Inc</span><span class="p">.</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>      <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jet</span> <span class="k">Set</span> <span class="p">(</span><span class="n">England</span><span class="p">)</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jouets</span> <span class="n">Et</span> <span class="n">Ours</span> <span class="p">(</span><span class="n">France</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">LT</span> <span class="n">Supplies</span> <span class="p">(</span><span class="n">USA</span><span class="p">)</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+</code></pre></div>
+
+<h4>执行算术计算</h4>
+
+<p>执行算术运算并扩充字段显示：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">prod_id</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">item_price</span><span class="p">,</span> <span class="n">quantity</span><span class="o">*</span><span class="n">item_price</span> <span class="k">AS</span> <span class="n">expanded_price</span> <span class="k">FROM</span> <span class="n">orderitems</span> <span class="k">WHERE</span> <span class="n">order_num</span> <span class="o">=</span> <span class="mi">20005</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---------+----------+------------+----------------+</span>
+<span class="o">|</span> <span class="n">prod_id</span> <span class="o">|</span> <span class="n">quantity</span> <span class="o">|</span> <span class="n">item_price</span> <span class="o">|</span> <span class="n">expanded_price</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+----------+------------+----------------+</span>
+<span class="o">|</span> <span class="n">ANV01</span>   <span class="o">|</span>       <span class="mi">10</span> <span class="o">|</span>       <span class="mi">5</span><span class="p">.</span><span class="mi">99</span> <span class="o">|</span>          <span class="mi">59</span><span class="p">.</span><span class="mi">90</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">ANV02</span>   <span class="o">|</span>        <span class="mi">3</span> <span class="o">|</span>       <span class="mi">9</span><span class="p">.</span><span class="mi">99</span> <span class="o">|</span>          <span class="mi">29</span><span class="p">.</span><span class="mi">97</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">TNT2</span>    <span class="o">|</span>        <span class="mi">5</span> <span class="o">|</span>      <span class="mi">10</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>          <span class="mi">50</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">FB</span>      <span class="o">|</span>        <span class="mi">1</span> <span class="o">|</span>      <span class="mi">10</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>          <span class="mi">10</span><span class="p">.</span><span class="mi">00</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------+----------+------------+----------------+</span>
+</code></pre></div>
+
+<p><code>MySQL 支持的加减乘除（+ - * 、）算术运算符，并用括号区分优先级</code></p>
+
+<p><code>now()</code>函数返回当前日期和时间：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">now</span><span class="p">();</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="n">now</span><span class="p">()</span>               <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">30</span> <span class="mi">16</span><span class="p">:</span><span class="mi">33</span><span class="p">:</span><span class="mi">47</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</code></pre></div>
+
+<h4>数据处理函数</h4>
+
+<p>函数我们前面已经接触了，比如 <code>trim()</code>，<code>rtrim()</code>，<code>ltrim()</code>。</p>
+
+<h5>文本处理函数</h5>
+
+<p><code>upper()</code>：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">vend_name</span><span class="p">,</span> <span class="k">UPPER</span><span class="p">(</span><span class="n">vend_name</span><span class="p">)</span> <span class="k">AS</span> <span class="n">vend_name_upcase</span> <span class="k">FROM</span> <span class="n">vendors</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">vend_name</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------------+------------------+</span>
+<span class="o">|</span> <span class="n">vend_name</span>      <span class="o">|</span> <span class="n">vend_name_upcase</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+------------------+</span>
+<span class="o">|</span> <span class="n">ACME</span>           <span class="o">|</span> <span class="n">ACME</span>             <span class="o">|</span>
+<span class="o">|</span> <span class="n">Anvils</span> <span class="n">R</span> <span class="n">Us</span>    <span class="o">|</span> <span class="n">ANVILS</span> <span class="n">R</span> <span class="n">US</span>      <span class="o">|</span>
+<span class="o">|</span> <span class="n">Furball</span> <span class="n">Inc</span><span class="p">.</span>   <span class="o">|</span> <span class="n">FURBALL</span> <span class="n">INC</span><span class="p">.</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jet</span> <span class="k">Set</span>        <span class="o">|</span> <span class="n">JET</span> <span class="k">SET</span>          <span class="o">|</span>
+<span class="o">|</span> <span class="n">Jouets</span> <span class="n">Et</span> <span class="n">Ours</span> <span class="o">|</span> <span class="n">JOUETS</span> <span class="n">ET</span> <span class="n">OURS</span>   <span class="o">|</span>
+<span class="o">|</span> <span class="n">LT</span> <span class="n">Supplies</span>    <span class="o">|</span> <span class="n">LT</span> <span class="n">SUPPLIES</span>      <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+------------------+</span>
+</code></pre></div>
+
+<p>常用的文本处理函数：</p>
+
+<table>
+<thead>
+<tr>
+  <th>函数</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>left()</td>
+  <td>返回串左边的字符</td>
+</tr>
+<tr>
+  <td>length()</td>
+  <td>返回串的长度</td>
+</tr>
+<tr>
+  <td>locate()</td>
+  <td>找出串的一个子串</td>
+</tr>
+<tr>
+  <td>lower()</td>
+  <td>将串转换为小写</td>
+</tr>
+<tr>
+  <td>ltrim()</td>
+  <td>去掉串左边的空格</td>
+</tr>
+<tr>
+  <td>right()</td>
+  <td>返回串右边的字符</td>
+</tr>
+<tr>
+  <td>rtrim()</td>
+  <td>去掉串右边的空格</td>
+</tr>
+<tr>
+  <td>soundex()</td>
+  <td>返回串的 SOUNDEX 值</td>
+</tr>
+<tr>
+  <td>substring()</td>
+  <td>返回子串的字符</td>
+</tr>
+<tr>
+  <td>upper()</td>
+  <td>将串转换成大写</td>
+</tr>
+</tbody>
+</table>
+
+<h5>日期和时间处理函数</h5>
+
+<table>
+<thead>
+<tr>
+  <th>函数</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>AddDate()</td>
+  <td>增加一个日期（天、周等）</td>
+</tr>
+<tr>
+  <td>AddTime()</td>
+  <td>增加一个时间（时、分等）</td>
+</tr>
+<tr>
+  <td>CurDate()</td>
+  <td>返回当前日期</td>
+</tr>
+<tr>
+  <td>CurTime()</td>
+  <td>返回当前时间</td>
+</tr>
+<tr>
+  <td>Date()</td>
+  <td>返回日期时间的日期部分</td>
+</tr>
+<tr>
+  <td>DateDiff()</td>
+  <td>计算两个日期之差</td>
+</tr>
+<tr>
+  <td>Date_Add()</td>
+  <td>高度灵活的日期运算函数</td>
+</tr>
+<tr>
+  <td>Date_Format()</td>
+  <td>返回一个格式化的日期或时间串</td>
+</tr>
+<tr>
+  <td>Day()</td>
+  <td>返回一个日期的天数部分</td>
+</tr>
+<tr>
+  <td>DatOfWeek()</td>
+  <td>对于一个日期，返回对应的星期几</td>
+</tr>
+<tr>
+  <td>Hour()</td>
+  <td>返回一个时间的小时部分</td>
+</tr>
+<tr>
+  <td>Minute()</td>
+  <td>返回一个日期的分钟部分</td>
+</tr>
+<tr>
+  <td>Month()</td>
+  <td>返回一个日期的月份部分</td>
+</tr>
+<tr>
+  <td>Now()</td>
+  <td>返回当前日期和时间</td>
+</tr>
+<tr>
+  <td>Second()</td>
+  <td>返回一个时间的秒部分</td>
+</tr>
+<tr>
+  <td>Time()</td>
+  <td>返回一个日期时间的时间部分</td>
+</tr>
+<tr>
+  <td>Year()</td>
+  <td>返回一个日期的年份部分</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+  <p>基本日期比较：</p>
+</blockquote>
+
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">order_num</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="n">order_date</span> <span class="o">=</span> <span class="s1">&#39;2005-09-01&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>上面的匹配显然不合理，如果订单日期精确到时间的话，就无法匹配上了。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">order_num</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="nb">DATE</span><span class="p">(</span><span class="n">order_date</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;2005-09-01&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+<blockquote>
+  <p>匹配一个时间段内的数据：</p>
+</blockquote>
+
+<div class="codehilite"><pre><span></span><code><span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">order_num</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="nb">DATE</span><span class="p">(</span><span class="n">order_date</span><span class="p">)</span> <span class="k">BETWEEN</span> <span class="s1">&#39;2005-09-01&#39;</span> <span class="k">and</span> <span class="s1">&#39;2005-09-30&#39;</span><span class="p">;</span>
+<span class="err">优化后</span>
+<span class="k">SELECT</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">order_num</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="k">YEAR</span><span class="p">(</span><span class="n">order_date</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2005</span> <span class="k">and</span> <span class="k">MONTH</span><span class="p">(</span><span class="n">order_date</span><span class="p">)</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+</code></pre></div>
+
+<h5>数值处理函数</h5>
+
+<table>
+<thead>
+<tr>
+  <th>函数</th>
+  <th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Abs()</td>
+  <td>返回一个数的绝对值</td>
+</tr>
+<tr>
+  <td>Cos()</td>
+  <td>返回一个角度的余弦</td>
+</tr>
+<tr>
+  <td>Exp()</td>
+  <td>返回一个数的指数值</td>
+</tr>
+<tr>
+  <td>Mod()</td>
+  <td>返回除操作的余数</td>
+</tr>
+<tr>
+  <td>Pi()</td>
+  <td>返回圆周率</td>
+</tr>
+<tr>
+  <td>Rand()</td>
+  <td>返回一个随机数</td>
+</tr>
+<tr>
+  <td>Sin()</td>
+  <td>返回一个角度的正弦</td>
+</tr>
+<tr>
+  <td>Sqrt()</td>
+  <td>返回一个数的平方根</td>
+</tr>
+<tr>
+  <td>Tan()</td>
+  <td>返回一个角度的正切</td>
+</tr>
+</tbody>
+</table>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-07-02">2018-07-02</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#MySQL" title="MySQL">MySQL</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# mysql
+" title=" mysql
+"> mysql
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

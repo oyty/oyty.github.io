@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Servlet前置知识</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Servlet前置知识</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: Servlet前置知识
+time: 2019-05-29
+category: JavaWeb
+tags: tomcat, servlet
+-->
+
+<h4>动态页面和静态页面</h4>
+
+<p>介绍 Servlet 之前，先来了解 <strong>静态页面</strong>、<strong>动态页面</strong> 的区别：
++ <strong>静态页面</strong>：或称为静态资源，一般除了 php、asp、jsp、cgi 等文件外，其它的都是静态资源。如常见的 html、css、js、png、gif、gzip 文件。用户访问某个静态资源时，web 服务器进行的操作很简单，就是添加适当的 HTTP 响应头部，然后一个空行，表示头部结束，最后去磁盘中读取这个文件，将读取到的数据追加到这个空行的后面，同时将 HTTP 响应数据发送给浏览器，也就是一个简单的文件传输过程，仅此而已。</p>
+
+<ul>
+<li><strong>动态页面</strong>：与静态资源不同，对于 php、asp、jsp、cgi 等动态页面，web 服务器不再是简单的去磁盘读取这些文件，然后将其发送给浏览器（如果是这样的，那我们访问 php 页面得到的将是该页面的 php 源码，而不是执行后的输出），而是先运行这些 php、asp、jsp、cgi 程序，获取它们的输出，最后将输出结果发送给浏览器。也就是说，这些响应数据是程序运算后动态生成的，不再是简单的文件传输了。</li>
+</ul>
+
+<h4>CGI协议</h4>
+
+<p>那么我们该如何编写动态页面呢？也就是说，我们该如何将编写的程序与 web 服务器进行交互，来动态的生成 web 内容呢？最简单的方式就是 CGI 了。<a href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E7%BD%91%E5%85%B3%E6%8E%A5%E5%8F%A3">CGI</a> 是 Common Gateway Interface 的缩写，即 <strong>通用网关接口</strong>。CGI 不是一门编程语言，它只是规定 web 服务器与执行程序之间如何通信的一个协议。CGI 是独立于任何语言的，CGI 程序可以使用任何脚本语言或者是完全独立的编程语言实现，只要这个语言可以在当前系统上运行。比如 Python、Perl、PHP、Shell、C/C++ 等等（其实 Java 也是可以的，不过要借助 Shell 脚本）。</p>
+
+<p>使用 CGI 编写动态页面是非常简单的，但是，这并不是说 CGI 就完美了，事实上，它有很多缺点，以至于现在基本没人使用 CGI 编写动态页面。为什么呢？最主要的问题就是 CGI 的 <strong>fork-and-execute</strong> 工作模式。每次访问 CGI 页面时，Web 服务器都要启动一个新的 CGI 进程，然后服务完成后又退出。也就是说，当前有多少个请求在线，就有多少个 CGI 进程在系统运行。这种工作模式在大规模的并发下，就会死翘翘了。</p>
+
+<p>进一步的话可以采用进程池，但是进程池的消耗也是很大的，如果可以采取线程池的方式，那就更加完美了，这就是 Servlet 采取的方法，因为 Java 天生就支持多线程。</p>
+
+<h4>Servlet</h4>
+
+<p>Servlet（Server Applet），全称 Java Servlet，未有中文译文。是用 Java 编写的服务器端程序。其主要功能在于交互式地浏览和修改数据，动态生成 Web 内容。狭义的 Servlet 是指 Java 语言实现的一个接口（javax.servlet.Servlet），广义的 Servlet 是指任何实现了这个 Servlet 接口的类，一般情况下，人们将 Servlet 理解为后者。
+Servlet 运行于支持 Java 的应用服务器中（常用的有 Tomcat、WebLogic）。从实现上讲，Servlet 可以响应任何类型的请求，但绝大多数情况下 Servlet 只用来扩展基于 HTTP 协议的 Web 服务器。</p>
+
+<p>为了更好的利用 Java 的优势，我们不再使用 Apache、Nginx 等 Web 服务器了，而是使用 Java 编写的 Web 服务器。此 Java 服务器程序监听在 0.0.0.0:80 端口，维护一个线程池，等待客户端的连接请求。当有一个请求到达时，服务器程序从线程池中选择一个空闲线程，执行对应的 Servlet 程序，当有另一个请求到达时，也是从线程池中抽取一个空闲线程，执行对应的 Servlet 程序。执行完毕后，这些线程不会立即销毁，而是回到线程池中，等待新的任务到达。</p>
+
+<p>而这个 Java 语言实现的 HTTP 服务器被称为 应用服务器，实际上，应用服务器根本不用我们自己开发，市面上有很多 Java 应用服务器的实现，有开源的（如 Tomcat），也有付费的（如 WebLogic）。因此，我们实际上要操心的只是 Servlet 而已。因为从始至终都只有应用服务器这一个 Java 进程在系统运行，所以此方案占用的系统资源是非常少的，最大的资源消耗也就是线程池了。</p>
+
+<p>注意，Java 应用服务器只能执行 Java 程序（比如这里的 Servlet，但实际上还有 Filter、Listener 等等），那么 <strong>静态资源</strong> 该怎么处理呢？也是通过 Servlet 来处理，让 Servlet 去磁盘中读取这些静态资源，然后发送回客户端。也就是说，在 Java 应用服务器中，静态资源和动态资源都是要经过 Servlet 处理的，这也带来一个问题，在处理静态资源时，Java 肯定是没有 C、C++ 快速的，况且，Java 应用服务器没有 Apache、Nginx 这么多关于静态资源的优化参数，就更慢了。所以，通常情况下，我们都是将 Apache/Nginx + Tomcat 两者整合在一起，Apache/Nginx 在前，Tomcat 在后，所有 Web 请求都先到达 Apache/Nginx，Apache/Nginx 判断是否为动态资源，如果是则交给后端的 Tomcat 处理，否则（静态资源）直接使用 Apache/Nginx 处理。这样的架构下，静态资源和动态资源的处理速度都非常好，两全其美。</p>
+
+<p>这里先理清楚几个名词，通常所说的 Servlet 是指实现了 javax.servlet.Servlet 接口的类，但是要运行这些 Servlet 类就必须要有一个专用的执行环境，而提供这个环境的就是 Servlet 容器（其实就是一个普通的 Java 程序），目前有很多 Servlet 容器的实现，比如开源的 Tomcat，但 Tomcat 不只包含 Servlet 容器，还包含其它一些组件，Tomcat 的 Servlet 容器有一个专有名称 Catalina。而 Tomcat 又是 Apache 软件基金会下属的 Jakarta 项目开发的一个 Servlet 容器，因此你经常看到这样一个名词 Apache Tomcat，其实就是指 Tomcat。</p>
+
+<p><strong>参考</strong>
+https://www.zfl9.com/java-servlet.html#more</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-05-29">2018-05-29</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# tomcat" title=" tomcat"> tomcat</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# servlet
+" title=" servlet
+"> servlet
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

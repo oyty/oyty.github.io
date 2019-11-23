@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>[Scrapy-3] 理解Scrapy的Response的数据结构</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>[Scrapy-3] 理解Scrapy的Response的数据结构</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: [Scrapy-3] 理解Scrapy的Response的数据结构
+time: 2019-04-27
+category: 爬虫相关
+tags: scrapy, response
+-->
+
+<p>﻿我们知道，<code>Scrapy</code>最终给到我们的是<code>response</code>对象，了解了<code>response</code>的数据结构，我们就能更好的解析利用<code>response</code>数据。</p>
+
+<h4>先来理解Response这个类</h4>
+
+<p>通过Response对象本身可以直接访问的对象或方法有：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">Headers</span><span class="p">(</span><span class="n">headers</span> <span class="ow">or</span> <span class="p">{})</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_set_body</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_set_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">flags</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">meta</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">&quot;Response.meta not available, this response &quot;</span>
+            <span class="s2">&quot;is not tied to any request&quot;</span>
+        <span class="p">)</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_url</span><span class="p">,</span> <span class="n">obsolete_setter</span><span class="p">(</span><span class="n">_set_url</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">))</span>
+
+<span class="n">body</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_body</span><span class="p">,</span> <span class="n">obsolete_setter</span><span class="p">(</span><span class="n">_set_body</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>从上面的代码可以知道，通过Response对象可以直接访问的属性有<code>headers</code>，<code>status</code>， <code>request</code>， <code>meta</code>，meta即是属性也是方法， <code>url</code>， <code>body</code>，以上可以直接获取内容，还有一些方法比如<code>text()</code>，<code>css()</code>，<code>xpath()</code>，在子类中实现可以使用。</p>
+
+<h4>看看Response的子类</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="n">Response</span>
+<span class="o">----</span><span class="n">TextResponse</span>
+<span class="o">--------</span><span class="n">HtmlResponse</span>
+<span class="o">--------</span><span class="n">XmlResponse</span>
+</code></pre></div>
+
+<p><code>HtmlResponse</code>，<code>XmlResponse</code>两个类本身只是简单的继承了<code>TextResponse</code>，没有做任何实现，所以我们重点来看看<code>TextResponse</code>类。
+<code>TextResponse</code>的主要是添加了一个新的构造函数，encoding。这个暂时还不能细致的理解，事实上对这个Python体系的编码都很晕，先放放吧。
+<code>TextResponse</code>对父类的一些未实现的方法做了实现：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Body as unicode &quot;&quot;&quot;</span>
+    <span class="c1"># access self.encoding before _cached_ubody to make sure</span>
+    <span class="c1"># _body_inferred_encoding is called</span>
+    <span class="n">benc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_ubody</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;charset=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">benc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_ubody</span> <span class="o">=</span> <span class="n">html_to_unicode</span><span class="p">(</span><span class="n">charset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_ubody</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">selector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">scrapy.selector</span> <span class="kn">import</span> <span class="n">Selector</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_selector</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_selector</span> <span class="o">=</span> <span class="n">Selector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_selector</span>
+
+<span class="k">def</span> <span class="nf">xpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">selector</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">css</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">selector</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</code></pre></div>
+
+<p>一般情况下，我们爬取网页获取到的<code>Response</code>对象是<code>HtmlResponse</code>，从上面的源码我们可以知道，Scrapy的数组组织结构是<code>Selector</code>。</p>
+
+<p>从Html源解析数据一般有两种方式：</p>
+
+<ul>
+<li><code>BeautifulSoup</code>，这个类比较有名了，它对一些标记不规范的HTML也有很好的适应能力，但它最大的缺点就是--<code>太慢了</code>。</li>
+<li><code>lxml</code>，这是一个xml解析库，当然也能用来解析html，lxml并不是Python的标准库，但是它有基于<code>ElementTree</code>的极具Python风格的API。</li>
+</ul>
+
+<p>Scrapy的<code>Selector</code>是基于lxml构建的，所以在速度和解析精度上和lxml相似。</p>
+
+<p>虽然lxml的语法很强大，能够处理很多其它的任务，但是在这里，Selector的语法就很简单，这也决定了Selector的解析方式。
+Seelctor或者说Scrapy的数据对象有以下三种解析方式</p>
+
+<ul>
+<li>﻿<code>xpath</code></li>
+<li><code>css</code></li>
+<li><code>re</code></li>
+</ul>
+
+<p>这个从Selector的源码可以看出，不喜欢<code>css</code>和<code>re</code>（主要是太麻烦了，记得东西太多，每次用还要现学），我们数据解析的话就专门使用<code>xpath</code>，下一节就来好好学习学习<code>xpath</code>的语法。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">css</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply the given CSS selector and return a :class:`SelectorList` instance.</span>
+
+<span class="sd">    ``query`` is a string containing the CSS selector to apply.</span>
+
+<span class="sd">    In the background, CSS queries are translated into XPath queries using</span>
+<span class="sd">    `cssselect`_ library and run ``.xpath()`` method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_css2xpath</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+</code></pre></div>
+
+<p>发现个比较变态的，css底层实现也是先将css转成xpath。那就不需要多此一举了。</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-04-27">2018-04-27</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#爬虫相关" title="爬虫相关">爬虫相关</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# scrapy" title=" scrapy"> scrapy</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# response
+" title=" response
+"> response
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Servlet的线程安全问题</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Servlet的线程安全问题</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: Servlet的线程安全问题
+time: 2019-06-08
+category: JavaWeb
+tags: 线程, servlet
+-->
+
+<h4>什么是线程安全</h4>
+
+<p>《Java并发编程实战》中的定义：<code>当多个线程访问某个类时，不管运行时环境采用何种调度方式，或者这些线程将如何交替执行，并且在主调代码中不需要任何额外的同步或协同，这个类都能表现出正确的行为，那么就称这个类是线程安全的。</code></p>
+
+<h4>Servlet的线程安全问题</h4>
+
+<p>Servlet引擎采用多线程模式运行，它为并发的每个访问请求都预备一个独立的线程来进行响应。这种以多线程方式执行的设计可以大大降低对系统的资源需求，提高系统的并发量和响应时间。但是也带来了线程安全的问题。</p>
+
+<p>Servlet本身是无状态的，一个无状态的Servlet是绝对线程安全的，无状态对象设计也是解决线程安全问题的一种有效手段。</p>
+
+<p>所以，Servlet是否线程安全是由它的实现来决定的，如果它内部的属性或方法会被多个线程改变，它就是线程不安全的，反之，就是线程安全的。</p>
+
+<h4>启动Tomcat（可实时查看日志）</h4>
+
+<p>前面我们启动Tomcat的时候命令如下：</p>
+
+<pre><code>sudo sh startup.sh
+</code></pre>
+
+<p>该命令执行后，命令行打印几行信息说明Tomcat启动成功就结束了，如果我们想要实时地查看Tomcat启动过程中，各种服务请求的日志信息就要换种方式启动Tomcat。</p>
+
+<pre><code>sudo sh catalina.sh run
+</code></pre>
+
+<h4>线程不安全示例</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">javax.servlet.ServletException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServlet</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletRequest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletResponse</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadServlet</span> <span class="kd">extends</span> <span class="n">HttpServlet</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doGet</span><span class="o">(</span><span class="n">HttpServletRequest</span> <span class="n">req</span><span class="o">,</span> <span class="n">HttpServletResponse</span> <span class="n">resp</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ServletException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+
+        <span class="n">count</span> <span class="o">++;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">500</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;This is the No. &quot;</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="s">&quot; request&quot;</span> <span class="o">+</span> <span class="s">&quot;, Current Thread is ：&quot;</span> <span class="o">+</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>启动Tomcat，注册Servlet并映射请求后，在浏览器访问对应该Servlet的地址，命令行下的输出如下：</p>
+
+<pre><code>This is the No. 1 request, Current Thread is ：http-nio-8080-exec-1
+This is the No. 2 request, Current Thread is ：http-nio-8080-exec-2
+This is the No. 3 request, Current Thread is ：http-nio-8080-exec-3
+This is the No. 5 request, Current Thread is ：http-nio-8080-exec-4
+This is the No. 6 request, Current Thread is ：http-nio-8080-exec-5
+This is the No. 6 request, Current Thread is ：http-nio-8080-exec-6
+This is the No. 9 request, Current Thread is ：http-nio-8080-exec-7
+This is the No. 9 request, Current Thread is ：http-nio-8080-exec-8
+This is the No. 10 request, Current Thread is ：http-nio-8080-exec-9
+This is the No. 12 request, Current Thread is ：http-nio-8080-exec-10
+This is the No. 14 request, Current Thread is ：http-nio-8080-exec-1
+This is the No. 14 request, Current Thread is ：http-nio-8080-exec-2
+This is the No. 14 request, Current Thread is ：http-nio-8080-exec-3
+This is the No. 14 request, Current Thread is ：http-nio-8080-exec-4
+</code></pre>
+
+<p>程序中每请求一次，count就会加一，如果是线程安全的，那么每一次请求至少请求次数是不同的，是自增的，但是我们看到日志中有多行<code>No. 14 request</code>，说明线程不安全。</p>
+
+<h4>影响Servlet线程安全的因素</h4>
+
+<p>多线程下，每个线程对局部变量都会有自己的一分copy，这样对局部变量的修改只会影响到自己的copy而不会对别的线程产生影响，这种情况下，线程是安全的。</p>
+
+<p>但是对于实例变量来说，所有的线程共享实例变量。<code>多个线程对共享资源的访问就造成了线程不安全问题</code>。</p>
+
+<h4>设计线程安全的Servlet</h4>
+
+<ul>
+<li>对共享的数据加锁，但是会使系统的性能大大降低</li>
+<li>避免使用实例变量</li>
+</ul>
+
+<p>参考：
+https://blog.csdn.net/qq_24145735/article/details/52433096
+张孝祥<a href="https://pan.baidu.com/s/1JS7hB1PG3L5QW4SWBw3d-w">《深入体验Java Web开发内幕-核心基础》</a></p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-06-08">2018-06-08</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# 线程" title=" 线程"> 线程</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# servlet
+" title=" servlet
+"> servlet
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>Java中的字符串拼接</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>Java中的字符串拼接</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <p>﻿<!--
+title: Java中的字符串拼接
+time: 2019-03-23
+category: Java
+tags: 字符串, string
+--></p>
+
+<p>在Java中，String对象是不可变的（Immutable）。你可以创建多个某一个String对象的别名，但是这些别名的引用是相同的。</p>
+
+<h4>深入剖析字符串拼接</h4>
+
+<p>既然字符串是不可变的，那么当多个字符串拼接时，很自然的就会以为拼接过程中会产生多余的字符串对象。</p>
+
+<pre><code>String a = "aaa";
+String b = "bbb";
+String c = "ccc";
+String info = a + b + c;
+</code></pre>
+
+<p>自然会以为上面字符串拼接过程中会产生多余的字符串对象<code>aaabbb</code>，如果拼接的字符串数量足够多的话，那岂不是会产生很多多余的字符串对象，这样不就严重影响性能了吗？</p>
+
+<p>然而事实并非如此。</p>
+
+<h4>编译器的优化处理</h4>
+
+<p>事实上，在Java代码被编译为字节码的时候，jvm会对字符串拼接进行优化处理，会先生成一个StringBuilder，然后后面的拼接就直接调用StringBuilder的append方法。</p>
+
+<p>这样看来，既然编译器做了优化处理，好像我们有没有必要再关注字符串拼接了，然后事实并非如此。
+我们来看一种情况</p>
+
+<pre><code>public void implicitUseStringBuilder(String[] values) {
+    String result = "";
+    for (int i = 0 ; i &lt; values.length; i ++) {
+        result += values[i];
+    }
+    System.out.println(result);
+}
+</code></pre>
+
+<p>在循环里面，字符串有拼接，这个时候jvm也会创建一个StringBuilder，但是循环流程走完后，进入下一个流程的时候又会新创建一个StringBuilder，这样就会创建大量多余的StringBuilder对象，影响性能，所以啊，还是要有好的编码习惯：</p>
+
+<pre><code>public void explicitUseStringBuider(String[] values) {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i &lt; values.length; i ++) {
+        result.append(values[i]);
+    }
+}
+</code></pre>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-03-23">2018-03-23</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#Java" title="Java">Java</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# 字符串" title=" 字符串"> 字符串</a>&nbsp;
+
+                        <a href="https://oyty.me/tags.html# string
+" title=" string
+"> string
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>

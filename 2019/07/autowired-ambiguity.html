@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="oyty"/>
+    <title>处理自动装配的歧义性</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    |
+</head>
+
+<div id="top"></div>
+<body>
+<div id="container">
+    <div id="main" role="main">
+        <header>
+            <h1>处理自动装配的歧义性</h1>
+        </header>
+
+        <nav>
+            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
+            <span><a title="about" class="" href="https://oyty.me">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+        </nav>
+
+        <article class="content">
+
+            <section class="post">
+                <!--
+title: 处理自动装配的歧义性
+time: 2019-07-09
+category: JavaWeb
+tags: primary
+-->
+
+<h4>自动装配的歧义性</h4>
+
+<p>在使用自动装配时，只有一个 bean 匹配所需的结果时，自动装配才是有效的。如果不止有一个 bean 能够匹配结果的话，这种歧义性会阻碍 Spring 自动装配属性、构造器参数或方法参数。</p>
+
+<p>比如我们使用<code>@Autowired</code>注解了一个方法，但是这个方法的参数接口有多个实现类，这个时候 Spring 就无法自动选择一个实现进行自动装配，会报出<code>NoUniqueBeanDefinitionException</code>异常。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Autowired</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDessert</span><span class="o">(</span><span class="n">Dessert</span> <span class="n">dessert</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">dessert</span> <span class="o">=</span> <span class="n">dessert</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cake</span> <span class="kd">implements</span> <span class="n">Dessert</span> <span class="o">{...}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cookies</span> <span class="kd">implements</span> <span class="n">Dessert</span> <span class="o">{...}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IceCream</span> <span class="kd">implements</span> <span class="n">Dessert</span> <span class="o">{...}</span>
+</code></pre></div>
+
+<p>当发生歧义性的时候，我们可以将可选 bean 中的某一个设为首选（primary）的 bean，或者使用限定符（qualifier）来帮助 Spring 将可选的 bean 的范围缩小到只有一个 bean。</p>
+
+<h5>标示首选的 bean</h5>
+
+<p>Spring 中使用<code>@Primary</code>来表达最喜欢的方案。</p>
+
+<p><code>@Primary</code>与<code>@Component</code>组合用在组件扫描的 bean 上：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Component</span>
+<span class="nd">@Primary</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cake</span> <span class="kd">implements</span> <span class="n">Dessert</span> <span class="o">{...}</span>
+</code></pre></div>
+
+<p>或者通过 Java 配置显式地声明 Cake：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Bean</span>
+<span class="nd">@Primary</span>
+<span class="kd">public</span> <span class="n">Dessert</span> <span class="nf">cake</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">Cake</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>就解决歧义性而言，限定符是一种更为强大的机制。</p>
+
+<h5>限定自动装配的 bean</h5>
+
+<p>设置首选 bean 的局限性在于<code>@Primary</code>无法将可选方案的范围限定到唯一一个无歧义性的选项中，它只能标示一个优先的可选方案。当 首选 bean 的数量超过一个时，我们并没有其它的方法进一步缩小可选范围。</p>
+
+<p>Spring 的限定符能够在所有可选的 bean 上进行缩小范围的操作，最终能够达到只有一个 bean 满足所规定的限制条件。</p>
+
+<p>我们可以使用<code>@Qualifier</code>指定要注入的是哪个 bean：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Autowired</span>
+<span class="nd">@Qualifier</span><span class="o">(</span><span class="s">&quot;cake&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDessert</span><span class="o">(</span><span class="n">Dessert</span> <span class="n">dessert</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">dessert</span> <span class="o">=</span> <span class="n">dessert</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p><code>@Qualifier</code>的参数就是要注入的 bean 的 ID。</p>
+
+<p>这种使用默认的 bean 的 ID 作为限定符有一定的风险，因为这里指定的限定符的 ID 与要注入的 bean 是紧耦合的，一旦我们重构了代码，改了类的名字，就可能会出错，所以我们最好是创建自定义的限定符。</p>
+
+<p>我们可以为 bean 设置自己的限定符，而不是依赖于将 bean ID 作为限定符。</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Component</span>
+<span class="nd">@Qualifier</span><span class="o">(</span><span class="s">&quot;sweet&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Cake</span> <span class="kd">implements</span> <span class="n">Dessert</span> <span class="o">{...}</span>
+
+<span class="nd">@Autowired</span>
+<span class="nd">@Qualifier</span><span class="o">(</span><span class="s">&quot;sweet&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDessert</span><span class="o">(</span><span class="n">Dessert</span> <span class="n">dessert</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">dessert</span> <span class="o">=</span> <span class="n">dessert</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>还有一种更强大的限定符，那就是自定义的限定符：</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@Target</span><span class="o">({</span><span class="n">ElementType</span><span class="o">.</span><span class="na">CONSTRUCTOR</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">METHOD</span><span class="o">,</span> <span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">})</span>
+<span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@Qualifier</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">Sweet</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>这样你可以为一个自动装载的类指定唯一的自定义的限定符，这样没有任何歧义。更强大的是，你可以指定多个自定义的限定符，然后通过组合在选择合适的。</p>
+
+            </section>
+
+            <section class="meta">
+                <span class="author">
+                    <a href="http://oyty.me">oyty</a>
+                </span>
+                <span class="time">
+                    /<time datetime="2018-07-09">2018-07-09</time>
+                </span>
+                <br/>
+                <span class="license">
+                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                </span>
+                <span class="categories">
+                    in categories
+                    <a href="https://oyty.me/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                </span>
+                <span class="tags">
+                    tagged with
+
+                        <a href="https://oyty.me/tags.html# primary
+" title=" primary
+"> primary
+</a>&nbsp;
+
+                </span>
+            </section>
+
+        </article>
+
+    </div>
+    <div id="disqus_thread"></div>
+</div>
+
+<script>
+
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+     var disqus_config = function () {
+     this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+     this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+     };
+     */
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://oyty-1.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        /* set variables locally for increased performance */
+        var scroll_timer;
+        var displayed = false;
+        var $message = $('#message a');
+        var $window = $(window);
+        var top = $(document.body).children(0).position().top;
+
+        /* react to scroll event on window */
+        $window.scroll(function () {
+            window.clearTimeout(scroll_timer);
+            scroll_timer = window.setTimeout(function () {
+                if ($window.scrollTop() <= top + 800) {
+                    displayed = false;
+                    $message.fadeOut(1000);
+                }
+                else if (displayed == false) {
+                    displayed = true;
+                    $message.stop(true, true).show().click(function () {
+                        $message.fadeOut(1000);
+                    });
+                }
+            }, 100);
+        });
+    });
+</script>
+</body>
+
+<script src="https://oyty.me/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115892756-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-115892756-1');
+</script>
+
+</html>
