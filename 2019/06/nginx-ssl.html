@@ -5,10 +5,10 @@
     <meta name="author" content="oyty"/>
     <title>﻿Ubuntu免费ssl证书（Let's Encrypt）配置</title>
     <link rel="shortcut icon" href="/favicon.ico">
-    <link href="https://oyty.me/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
-    <link rel="stylesheet" href="https://oyty.me/media/css/style.css">
-    <link rel="stylesheet" href="https://oyty.me/media/css/codehighlight.css">
-    <link rel="stylesheet" href="https://oyty.me/styles/github.css">
+    <link href="https://oyty.top/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.top/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.top/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.top/styles/github.css">
     |
 </head>
 
@@ -21,14 +21,14 @@
         </header>
 
         <nav>
-            <span><a title="home page" class="" href="https://oyty.me">home</a></span>
-            <span><a title="about" class="" href="https://oyty.me">about</a></span>
-            <span><a title="publication" class="" href="https://oyty.me">publication</a></span>
-            <span><a title="guestbook" class="" href="https://oyty.me">guestbook</a></span>
-            <span><a title="vitae" class="" href="https://oyty.me">vitae</a></span>
-            <span><a title="categories" class="" href="https://oyty.me/category.html">categories</a></span>
-            <span><a title="tags" class="" href="https://oyty.me/tags.html">tags</a></span>
-            <span><a title="links" class="" href="https://oyty.me">links</a></span>
+            <span><a title="home page" class="" href="https://oyty.top">home</a></span>
+            <span><a title="about" class="" href="https://oyty.top">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.top">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.top">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.top">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.top/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.top/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.top">links</a></span>
             <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
         </nav>
 
@@ -86,9 +86,9 @@ change by editing your web server's configuration.
 
 <pre><code>IMPORTANT NOTES:
  - Congratulations! Your certificate and chain have been saved at:
-   /etc/letsencrypt/live/oyty.me/fullchain.pem
+   /etc/letsencrypt/live/oyty.top/fullchain.pem
    Your key file has been saved at:
-   /etc/letsencrypt/live/oyty.me/privkey.pem
+   /etc/letsencrypt/live/oyty.top/privkey.pem
    Your cert will expire on 2019-09-24. To obtain a new or tweaked
    version of this certificate in the future, simply run certbot again
    with the "certonly" option. To non-interactively renew *all* of
@@ -108,7 +108,7 @@ change by editing your web server's configuration.
 <pre><code>
 server {
 
-       server_name oyty.me www.oyty.me;
+       server_name oyty.top www.oyty.top;
 
        root /var/www/oyty/oyty.github.io;
        index index.html;
@@ -119,20 +119,20 @@ server {
 
     listen [::]:443 ssl ipv6only=on; # managed by Certbot
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/oyty.me/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/oyty.me/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/oyty.top/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/oyty.top/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 
 }
 server {
-    if ($host = www.oyty.me) {
+    if ($host = www.oyty.top) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
-    if ($host = oyty.me) {
+    if ($host = oyty.top) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
@@ -140,7 +140,7 @@ server {
        listen 80;
        listen [::]:80;
 
-       server_name oyty.me www.oyty.me;
+       server_name oyty.top www.oyty.top;
     return 404; # managed by Certbot
 
 }
@@ -160,7 +160,7 @@ server {
 
             <section class="meta">
                 <span class="author">
-                    <a href="http://oyty.me">oyty</a>
+                    <a href="http://oyty.top">oyty</a>
                 </span>
                 <span class="time">
                     /<time datetime="2019-06-26">2019-06-26</time>
@@ -171,16 +171,16 @@ server {
                 </span>
                 <span class="categories">
                     in categories
-                    <a href="https://oyty.me/category.html#编程" title="编程">编程</a>&nbsp;
+                    <a href="https://oyty.top/category.html#编程" title="编程">编程</a>&nbsp;
                 </span>
                 <span class="tags">
                     tagged with
 
-                        <a href="https://oyty.me/tags.html# nginx" title=" nginx"> nginx</a>&nbsp;
+                        <a href="https://oyty.top/tags.html# nginx" title=" nginx"> nginx</a>&nbsp;
 
-                        <a href="https://oyty.me/tags.html# ssl" title=" ssl"> ssl</a>&nbsp;
+                        <a href="https://oyty.top/tags.html# ssl" title=" ssl"> ssl</a>&nbsp;
 
-                        <a href="https://oyty.me/tags.html# Let's Encrypt
+                        <a href="https://oyty.top/tags.html# Let's Encrypt
 " title=" Let's Encrypt
 "> Let's Encrypt
 </a>&nbsp;
@@ -247,7 +247,7 @@ server {
 </script>
 </body>
 
-<script src="https://oyty.me/highlight.js"></script>
+<script src="https://oyty.top/highlight.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
