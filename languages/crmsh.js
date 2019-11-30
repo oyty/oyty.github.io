@@ -1,7 +1,7 @@
 /*
 Language: crmsh
 Author: Kristoffer Gronlund <kgronlund@suse.com>
-Website: http://crmsh.github.io
+Website: https://crmsh.github.io
 Description: Syntax Highlighting for the crmsh DSL
 Category: config
 */

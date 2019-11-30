@@ -1,7 +1,7 @@
 /*
 Language: TeX
 Author: Vladimir Moskva <vladmos@gmail.com>
-Website: http://fulc.ru/
+Website: https://fulc.ru/
 Category: markup
 */
 

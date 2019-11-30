@@ -1,7 +1,7 @@
 /*
 Language: Roboconf
 Author: Vincent Zurczak <vzurczak@linagora.com>
-Website: http://roboconf.net
+Website: https://roboconf.net
 Description: Syntax highlighting for Roboconf's DSL
 Category: config
 */

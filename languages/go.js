@@ -2,7 +2,7 @@
 Language: Go
 Author: Stephan Kountso aka StepLg <steplg@gmail.com>
 Contributors: Evgeny Stepanischev <imbolk@gmail.com>
-Description: Google go language (golang). For info about language see http://golang.org/
+Description: Google go language (golang). For info about language see https://golang.org/
 Category: system
 */
 

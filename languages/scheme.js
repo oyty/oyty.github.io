@@ -1,6 +1,6 @@
 /*
 Language: Scheme
-Description: Keywords based on http://community.schemewiki.org/?scheme-keywords
+Description: Keywords based on https://community.schemewiki.org/?scheme-keywords
 Author: JP Verkamp <me@jverkamp.com>
 Contributors: Ivan Sagalaev <maniac@softwaremaniacs.org>
 Origin: clojure.js

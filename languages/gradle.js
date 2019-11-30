@@ -1,7 +1,7 @@
 /*
 Language: Gradle
 Author: Damian Mee <mee.damian@gmail.com>
-Website: http://meeDamian.com
+Website: https://meeDamian.com
 */
 
 function(hljs) {

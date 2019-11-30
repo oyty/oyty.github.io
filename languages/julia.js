@@ -79,7 +79,7 @@ function(hljs) {
       'VersionNumber Void WeakKeyDict WeakRef WorkerConfig WorkerPool '
   };
 
-  // ref: http://julia.readthedocs.org/en/latest/manual/variables/#allowed-variable-names
+  // ref: https://julia.readthedocs.org/en/latest/manual/variables/#allowed-variable-names
   var VARIABLE_NAME_RE = '[A-Za-z_\\u00A1-\\uFFFF][A-Za-z_0-9\\u00A1-\\uFFFF]*';
 
   // placeholder for recursive self-reference
@@ -87,7 +87,7 @@ function(hljs) {
     lexemes: VARIABLE_NAME_RE, keywords: KEYWORDS, illegal: /<\//
   };
 
-  // ref: http://julia.readthedocs.org/en/latest/manual/integers-and-floating-point-numbers/
+  // ref: https://julia.readthedocs.org/en/latest/manual/integers-and-floating-point-numbers/
   var NUMBER = {
     className: 'number',
     // supported numeric literals:

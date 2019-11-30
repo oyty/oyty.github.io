@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="author" content="oyty"/>
     <title>互联网协议入门（一）</title>
     <link rel="shortcut icon" href="/favicon.ico">
-    <link href="http://oyty.top/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
-    <link rel="stylesheet" href="http://oyty.top/media/css/style.css">
-    <link rel="stylesheet" href="http://oyty.top/media/css/codehighlight.css">
-    <link rel="stylesheet" href="http://oyty.top/styles/github.css">
+    <link href="https://oyty.top/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.top/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.top/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.top/styles/github.css">
     |
 </head>
 
@@ -21,15 +21,15 @@
         </header>
 
         <nav>
-            <span><a title="home page" class="" href="http://oyty.top">home</a></span>
-            <span><a title="about" class="" href="http://oyty.top">about</a></span>
-            <span><a title="publication" class="" href="http://oyty.top">publication</a></span>
-            <span><a title="guestbook" class="" href="http://oyty.top">guestbook</a></span>
-            <span><a title="vitae" class="" href="http://oyty.top">vitae</a></span>
-            <span><a title="categories" class="" href="http://oyty.top/category.html">categories</a></span>
-            <span><a title="tags" class="" href="http://oyty.top/tags.html">tags</a></span>
-            <span><a title="links" class="" href="http://oyty.top">links</a></span>
-            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+            <span><a title="home page" class="" href="https://oyty.top">home</a></span>
+            <span><a title="about" class="" href="https://oyty.top">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.top">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.top">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.top">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.top/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.top/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.top">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="https://feed.feedsky.com/laimingxing">subscribe</a></span>
         </nav>
 
         <article class="content">
@@ -41,7 +41,7 @@ time: 2019-05-28
 category: JavaWeb
 tags: arp, 互联网
 -->
-以下内容转自阮一峰<a href="http://www.ruanyifeng.com/blog/2012/05/internet_protocol_suite_part_i.html">《互联网协议入门（一）》</a></p>
+以下内容转自阮一峰<a href="https://www.ruanyifeng.com/blog/2012/05/internet_protocol_suite_part_i.html">《互联网协议入门（一）》</a></p>
 
 <p>我们每天使用互联网，你是否想过，它是如何实现的？</p>
 
@@ -93,11 +93,11 @@ tags: arp, 互联网
 
 <h4>3.2 以太网协议</h4>
 
-<p>早期的时候，每家公司都有自己的电信号分组方式。逐渐地，一种叫做<a href="http://zh.wikipedia.org/wiki/%E4%BB%A5%E5%A4%AA%E7%BD%91">&quot;以太网&quot;</a>（Ethernet）的协议，占据了主导地位。</p>
+<p>早期的时候，每家公司都有自己的电信号分组方式。逐渐地，一种叫做<a href="https://zh.wikipedia.org/wiki/%E4%BB%A5%E5%A4%AA%E7%BD%91">&quot;以太网&quot;</a>（Ethernet）的协议，占据了主导地位。</p>
 
 <p>以太网规定，一组电信号构成一个数据包，叫做"帧"（Frame）。每一帧分成两个部分：标头（Head）和数据（Data）。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-4b072929352a7464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-4b072929352a7464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>"标头"包含数据包的一些说明项，比如发送者、接受者、数据类型等等；"数据"则是数据包的具体内容。</p>
 
@@ -109,11 +109,11 @@ tags: arp, 互联网
 
 <p>以太网规定，连入网络的所有设备，都必须具有"网卡"接口。数据包必须是从一块网卡，传送到另一块网卡。网卡的地址，就是数据包的发送地址和接收地址，这叫做MAC地址。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-86b62cdbc10acb7a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-86b62cdbc10acb7a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>每块网卡出厂的时候，都有一个全世界独一无二的MAC地址，长度是48个二进制位，通常用12个十六进制数表示。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-f4f4727cd9093015.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-f4f4727cd9093015.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>前6个十六进制数是厂商编号，后6个是该厂商的网卡流水号。有了MAC地址，就可以定位网卡和数据包的路径了。</p>
 
@@ -129,7 +129,7 @@ tags: arp, 互联网
 
 <p>回答是以太网采用了一种很"原始"的方式，它不是把数据包准确送到接收方，而是向本网络内所有计算机发送，让每台计算机自己判断，是否为接收方。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-b27aad7a6c14ddfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-b27aad7a6c14ddfa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>上图中，1号计算机向2号计算机发送一个数据包，同一个子网络的3号、4号、5号计算机都会收到这个包。它们读取这个包的"标头"，找到接收方的MAC地址，然后与自身的MAC地址相比较，如果两者相同，就接受这个包，做进一步处理，否则就丢弃这个包。这种发送方式就叫做"广播"（broadcasting）。</p>
 
@@ -145,7 +145,7 @@ tags: arp, 互联网
 
 <p>互联网是无数子网络共同组成的一个巨型网络，很像想象上海和洛杉矶的电脑会在同一个子网络，这几乎是不可能的。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-cd2fad6e0540ceb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-cd2fad6e0540ceb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>因此，必须找到一种方法，能够区分哪些MAC地址属于同一个子网络，哪些不是。如果是同一个子网络，就采用广播方式发送，否则就采用"路由"方式发送。（"路由"的意思，就是指如何向不同的子网络分发数据包，这是一个很大的主题，本文不涉及。）遗憾的是，MAC地址本身无法做到这一点。它只与厂商有关，与所处网络无关。</p>
 
@@ -161,7 +161,7 @@ tags: arp, 互联网
 
 <p>目前，广泛采用的是IP协议第四版，简称IPv4。这个版本规定，网络地址由32个二进制位组成。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-6923045e19a4f687.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-6923045e19a4f687.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>习惯上，我们用分成四段的十进制数表示IP地址，从0.0.0.0一直到255.255.255.255。</p>
 
@@ -189,11 +189,11 @@ tags: arp, 互联网
 
 <p>具体来说，IP数据包也分为"标头"和"数据"两个部分。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-96b5f75349016329.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-96b5f75349016329.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>"标头"部分主要包括版本、长度、IP地址等信息，"数据"部分则是IP数据包的具体内容。它放进以太网数据包后，以太网数据包就变成了下面这样。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-f2a66410cfd81dd7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-f2a66410cfd81dd7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>IP数据包的"标头"部分的长度为20到60字节，整个数据包的总长度最大为65,535字节。因此，理论上，一个IP数据包的"数据"部分，最长为65,515字节。前面说过，以太网数据包的"数据"部分，最长只有1500字节。因此，如果IP数据包超过了1500字节，它就需要分割成几个以太网数据包，分开发送了。</p>
 
@@ -231,11 +231,11 @@ tags: arp, 互联网
 
 <p>UDP数据包，也是由"标头"和"数据"两部分组成。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-36873c264a0ae308.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-36873c264a0ae308.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>"标头"部分主要定义了发出端口和接收端口，"数据"部分就是具体的内容。然后，把整个UDP数据包放入IP数据包的"数据"部分，而前面说过，IP数据包又是放在以太网数据包之中的，所以整个以太网数据包现在变成了下面这样：</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-edbdf6c2ac49dc5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-edbdf6c2ac49dc5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>UDP数据包非常简单，"标头"部分一共只有8个字节，总长度不超过65,535字节，正好放进一个IP数据包。</p>
 
@@ -259,7 +259,7 @@ tags: arp, 互联网
 
 <p>这是最高的一层，直接面对用户。它的数据就放在TCP数据包的"数据"部分。因此，现在的以太网的数据包就变成下面这样。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/579868-29e42a6bd1f91564.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/579868-29e42a6bd1f91564.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image" /></p>
 
 <p>至此，整个互联网的五层结构，自下而上全部讲完了。这是从系统的角度，解释互联网是如何构成的。<a href="https://www.jianshu.com/p/d1a5af4f4911">下一篇</a>，我反过来，从用户的角度，自上而下看看这个结构是如何发挥作用，完成一次网络数据交换的。</p>
 
@@ -267,25 +267,25 @@ tags: arp, 互联网
 
             <section class="meta">
                 <span class="author">
-                    <a href="http://oyty.top">oyty</a>
+                    <a href="https://oyty.top">oyty</a>
                 </span>
                 <span class="time">
                     /<time datetime="2019-05-28">2019-05-28</time>
                 </span>
                 <br/>
                 <span class="license">
-                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                    Published under <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
                 </span>
                 <span class="categories">
                     in categories
-                    <a href="http://oyty.top/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                    <a href="https://oyty.top/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
                 </span>
                 <span class="tags">
                     tagged with
 
-                        <a href="http://oyty.top/tags.html# arp" title=" arp"> arp</a>&nbsp;
+                        <a href="https://oyty.top/tags.html# arp" title=" arp"> arp</a>&nbsp;
 
-                        <a href="http://oyty.top/tags.html# 互联网
+                        <a href="https://oyty.top/tags.html# 互联网
 " title=" 互联网
 "> 互联网
 </a>&nbsp;
@@ -352,7 +352,7 @@ tags: arp, 互联网
 </script>
 </body>
 
-<script src="http://oyty.top/highlight.js"></script>
+<script src="https://oyty.top/highlight.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->

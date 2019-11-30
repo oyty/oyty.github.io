@@ -41,7 +41,7 @@ function(hljs) {
         'true false',
       built_in:
         // Shell built-ins
-        // http://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html
+        // https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html
         'break cd continue eval exec exit export getopts hash pwd readonly return shift test times ' +
         'trap umask unset ' +
         // Bash built-ins

@@ -1,7 +1,7 @@
 /*
 Language: XL
 Author: Christophe de Dinechin <christophe@taodyne.com>
-Description: An extensible programming language, based on parse tree rewriting (http://xlr.sf.net)
+Description: An extensible programming language, based on parse tree rewriting (https://xlr.sf.net)
 */
 
 function(hljs) {

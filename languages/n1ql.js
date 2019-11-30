@@ -14,7 +14,7 @@ function(hljs) {
           'build create index delete drop explain infer|10 insert merge prepare select update upsert|10',
         end: /;/, endsWithParent: true,
         keywords: {
-          // Taken from http://developer.couchbase.com/documentation/server/current/n1ql/n1ql-language-reference/reservedwords.html
+          // Taken from https://developer.couchbase.com/documentation/server/current/n1ql/n1ql-language-reference/reservedwords.html
           keyword:
             'all alter analyze and any array as asc begin between binary boolean break bucket build by call ' +
             'case cast cluster collate collection commit connect continue correlate cover create database ' +
@@ -28,10 +28,10 @@ function(hljs) {
             'schema select self semi set show some start statistics string system then to transaction trigger ' +
             'truncate under union unique unknown unnest unset update upsert use user using validate value ' +
             'valued values via view when where while with within work xor',
-          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/literals.html
+          // Taken from https://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/literals.html
           literal:
             'true false null missing|5',
-          // Taken from http://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/functions.html
+          // Taken from https://developer.couchbase.com/documentation/server/4.5/n1ql/n1ql-language-reference/functions.html
           built_in:
             'array_agg array_append array_concat array_contains array_count array_distinct array_ifnull array_length ' +
             'array_max array_min array_position array_prepend array_put array_range array_remove array_repeat array_replace ' +

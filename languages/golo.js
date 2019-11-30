@@ -1,7 +1,7 @@
 /*
 Language: Golo
 Author: Philippe Charriere <ph.charriere@gmail.com>
-Description: a lightweight dynamic language for the JVM, see http://golo-lang.org/
+Description: a lightweight dynamic language for the JVM, see https://golo-lang.org/
 */
 
 function(hljs) {

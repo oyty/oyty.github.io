@@ -1,7 +1,7 @@
 /*
 Language: Nix
 Author: Domen Kožar <domen@dev.si>
-Description: Nix functional language. See http://nixos.org/nix
+Description: Nix functional language. See https://nixos.org/nix
 */
 
 

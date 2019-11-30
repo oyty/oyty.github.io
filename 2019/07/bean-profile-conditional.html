@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="author" content="oyty"/>
     <title>环境与 profile和条件化的 bean</title>
     <link rel="shortcut icon" href="/favicon.ico">
-    <link href="http://oyty.top/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
-    <link rel="stylesheet" href="http://oyty.top/media/css/style.css">
-    <link rel="stylesheet" href="http://oyty.top/media/css/codehighlight.css">
-    <link rel="stylesheet" href="http://oyty.top/styles/github.css">
+    <link href="https://oyty.top/feed/" rel="alternate" title="oyty" type="application/atom+xml"/>
+    <link rel="stylesheet" href="https://oyty.top/media/css/style.css">
+    <link rel="stylesheet" href="https://oyty.top/media/css/codehighlight.css">
+    <link rel="stylesheet" href="https://oyty.top/styles/github.css">
     |
 </head>
 
@@ -21,15 +21,15 @@
         </header>
 
         <nav>
-            <span><a title="home page" class="" href="http://oyty.top">home</a></span>
-            <span><a title="about" class="" href="http://oyty.top">about</a></span>
-            <span><a title="publication" class="" href="http://oyty.top">publication</a></span>
-            <span><a title="guestbook" class="" href="http://oyty.top">guestbook</a></span>
-            <span><a title="vitae" class="" href="http://oyty.top">vitae</a></span>
-            <span><a title="categories" class="" href="http://oyty.top/category.html">categories</a></span>
-            <span><a title="tags" class="" href="http://oyty.top/tags.html">tags</a></span>
-            <span><a title="links" class="" href="http://oyty.top">links</a></span>
-            <span><a title="subscribe by RSS" class="" href="http://feed.feedsky.com/laimingxing">subscribe</a></span>
+            <span><a title="home page" class="" href="https://oyty.top">home</a></span>
+            <span><a title="about" class="" href="https://oyty.top">about</a></span>
+            <span><a title="publication" class="" href="https://oyty.top">publication</a></span>
+            <span><a title="guestbook" class="" href="https://oyty.top">guestbook</a></span>
+            <span><a title="vitae" class="" href="https://oyty.top">vitae</a></span>
+            <span><a title="categories" class="" href="https://oyty.top/category.html">categories</a></span>
+            <span><a title="tags" class="" href="https://oyty.top/tags.html">tags</a></span>
+            <span><a title="links" class="" href="https://oyty.top">links</a></span>
+            <span><a title="subscribe by RSS" class="" href="https://feed.feedsky.com/laimingxing">subscribe</a></span>
         </nav>
 
         <article class="content">
@@ -118,13 +118,13 @@ tags: spring, profile, conditional
 <h5>在 XML 中配置 profile</h5>
 
 <div class="codehilite"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-<span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.springframework.org/schema/beans&quot;</span>
-       <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:jdbc=</span><span class="s">&quot;http://www.springframework.org/schema/jdbc&quot;</span>
+<span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&quot;https://www.springframework.org/schema/beans&quot;</span>
+       <span class="na">xmlns:xsi=</span><span class="s">&quot;https://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:jdbc=</span><span class="s">&quot;https://www.springframework.org/schema/jdbc&quot;</span>
        <span class="na">xsi:schemaLocation=</span><span class="s">&quot;</span>
-<span class="s">       http://www.springframework.org/schema/jdbc</span>
-<span class="s">       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd</span>
-<span class="s">       http://www.springframework.org/schema/beans</span>
-<span class="s">       http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>
+<span class="s">       https://www.springframework.org/schema/jdbc</span>
+<span class="s">       https://www.springframework.org/schema/jdbc/spring-jdbc.xsd</span>
+<span class="s">       https://www.springframework.org/schema/beans</span>
+<span class="s">       https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>
        <span class="na">profile=</span><span class="s">&quot;dev&quot;</span><span class="nt">&gt;</span>
 
     <span class="nt">&lt;jdbc:embedded-database</span> <span class="na">id=</span><span class="s">&quot;dataSource&quot;</span><span class="nt">&gt;</span>
@@ -138,13 +138,13 @@ tags: spring, profile, conditional
 <p>还可以对应着做如下配置：</p>
 
 <div class="codehilite"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-<span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.springframework.org/schema/beans&quot;</span>
-       <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:jdbc=</span><span class="s">&quot;http://www.springframework.org/schema/jdbc&quot;</span>
-       <span class="na">xmlns:jee=</span><span class="s">&quot;http://www.springframework.org/schema/jee&quot;</span>
-       <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.springframework.org/schema/jdbc</span>
-<span class="s">       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd</span>
-<span class="s">       http://www.springframework.org/schema/beans</span>
-<span class="s">       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&quot;https://www.springframework.org/schema/beans&quot;</span>
+       <span class="na">xmlns:xsi=</span><span class="s">&quot;https://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns:jdbc=</span><span class="s">&quot;https://www.springframework.org/schema/jdbc&quot;</span>
+       <span class="na">xmlns:jee=</span><span class="s">&quot;https://www.springframework.org/schema/jee&quot;</span>
+       <span class="na">xsi:schemaLocation=</span><span class="s">&quot;https://www.springframework.org/schema/jdbc</span>
+<span class="s">       https://www.springframework.org/schema/jdbc/spring-jdbc.xsd</span>
+<span class="s">       https://www.springframework.org/schema/beans</span>
+<span class="s">       https://www.springframework.org/schema/beans/spring-beans.xsd https://www.springframework.org/schema/jee https://www.springframework.org/schema/jee/spring-jee.xsd&quot;</span><span class="nt">&gt;</span>
 
     <span class="nt">&lt;beans</span> <span class="na">profile=</span><span class="s">&quot;dev&quot;</span><span class="nt">&gt;</span>
         <span class="nt">&lt;jdbc:embedded-database</span> <span class="na">id=</span><span class="s">&quot;dataSource&quot;</span><span class="nt">&gt;</span>
@@ -300,27 +300,27 @@ tags: spring, profile, conditional
 
             <section class="meta">
                 <span class="author">
-                    <a href="http://oyty.top">oyty</a>
+                    <a href="https://oyty.top">oyty</a>
                 </span>
                 <span class="time">
                     /<time datetime="2019-07-05">2019-07-05</time>
                 </span>
                 <br/>
                 <span class="license">
-                    Published under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
+                    Published under <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/3.0/">(CC) BY-NC-SA</a>
                 </span>
                 <span class="categories">
                     in categories
-                    <a href="http://oyty.top/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
+                    <a href="https://oyty.top/category.html#JavaWeb" title="JavaWeb">JavaWeb</a>&nbsp;
                 </span>
                 <span class="tags">
                     tagged with
 
-                        <a href="http://oyty.top/tags.html# spring" title=" spring"> spring</a>&nbsp;
+                        <a href="https://oyty.top/tags.html# spring" title=" spring"> spring</a>&nbsp;
 
-                        <a href="http://oyty.top/tags.html# profile" title=" profile"> profile</a>&nbsp;
+                        <a href="https://oyty.top/tags.html# profile" title=" profile"> profile</a>&nbsp;
 
-                        <a href="http://oyty.top/tags.html# conditional
+                        <a href="https://oyty.top/tags.html# conditional
 " title=" conditional
 "> conditional
 </a>&nbsp;
@@ -387,7 +387,7 @@ tags: spring, profile, conditional
 </script>
 </body>
 
-<script src="http://oyty.top/highlight.js"></script>
+<script src="https://oyty.top/highlight.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->

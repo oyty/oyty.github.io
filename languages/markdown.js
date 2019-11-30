@@ -2,7 +2,7 @@
 Language: Markdown
 Requires: xml.js
 Author: John Crepezzi <john.crepezzi@gmail.com>
-Website: http://seejohncode.com/
+Website: https://seejohncode.com/
 Category: common, markup
 */
 

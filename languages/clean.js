@@ -2,7 +2,7 @@
 Language: Clean
 Author: Camil Staps <info@camilstaps.nl>
 Category: functional
-Website: http://clean.cs.ru.nl
+Website: https://clean.cs.ru.nl
 */
 
 function(hljs) {
